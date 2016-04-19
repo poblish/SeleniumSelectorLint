@@ -19,6 +19,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
@@ -28,6 +29,18 @@ public class PagesTest {
 
     // OurWebDriverWrapper driver = new OurWebDriverWrapper(new FirefoxDriver());
     OurWebDriverWrapper driver = new OurWebDriverWrapper( new HtmlUnitDriver(true) );
+
+    @Test
+    public void testGmailPage() {
+        driver.get(new File("src/test/resources/gmail.html").toURI().toString());
+//        testElement(driver, By.xpath("//*[@id=\":kj\"]/span"),
+//                  /* ==> */ By.cssSelector(""));
+
+        // //*[@id=":ki"]/td[5]/div[1]/span
+        // div[role='main'] table tr:nth-child(1) td:nth-child(5) div:nth-child(1) span
+        // //div[@role='main']//table//tr[1]/td[5]/div[1]/span
+        
+    }
 
     @Test
     public void testHtml5Page() {
@@ -101,7 +114,7 @@ public class PagesTest {
                   /* ==> */ By.cssSelector("li[data-attr='MyItem']"));
 
         testElement(driver, By.cssSelector("#dashboard > div.news.column.two-thirds > div:nth-child(10) > div > div > div.title"),
-                  /* ==> */ By.cssSelector("#dashboard > div.news > div:nth-child(10) div.title"));
+                  /* ==> */ By.cssSelector("#dashboard div:nth-child(10) div.title"));
     }
 
     private static class OurWebDriverWrapper extends WebDriverWrapper {
@@ -179,10 +192,8 @@ public class PagesTest {
                     }
                 }
 
-                String[] classes = Classes.filter( attrs.get("class") );
                 // Need to filter, or at least *score* these!
-
-//                System.out.println("-- classes = " + Arrays.toString(classes));
+                String[] classes = Classes.filter( attrs.get("class") );
                 for (String eachClass : classes) {
                     if (eachClass.isEmpty()) {
                         continue;
@@ -197,6 +208,10 @@ public class PagesTest {
                 attrs.remove("id");
                 attrs.remove("disabled");
                 attrs.remove("style");
+                attrs.remove("gh");  // FIXME Gmail!
+                attrs.remove("cellpadding");
+                attrs.remove("tabindex");
+                attrs.remove("lang");
 
                 // Need to filter attrs!!!
                 for (Entry<String, String> eachGoodAttr : attrs.entrySet()) {
@@ -225,18 +240,28 @@ public class PagesTest {
                 if (results.isEmpty()) { // ???
                     final String selector = originalSelector.toString();
                     final List<String> clauses = Splitter.onPattern("[> ]").trimResults().omitEmptyStrings().splitToList( selector.substring( selector.indexOf(':') + 1) );
-//                    final String mostSpecific = clauses.get( clauses.size() - 1);
-                    System.out.println("==> clauses = " + clauses);
+                    final String mostSpecific = clauses.get( clauses.size() - 1);
+//                    System.out.println("==> clauses = " + clauses);
 
                     WebElement parent = original;
                     while ( /* parent != null && */ (parent = parent.findElement(By.xpath(".."))) != null) {
+                        if (parent.getTagName().equals("html")) {
+                            break;
+                        }
+
                         Map<String, String> pattrs = attrs(getWrappedDriver(), parent);
-                        System.out.println("==> p = " + pattrs);
-                        if (pattrs.containsKey("id")) {  // Need to check other intrinsic props of the parent!
+                        System.out.println("==> parent: " + parent.getTagName() + " = " + pattrs);
+
+                        final String parentId = pattrs.get("id");
+                        if (hasString(parentId) && !Ids.isGeneratedString(parentId)) {  // Need to check other intrinsic props of the parent!
 //                            By newGuess = By.cssSelector("#" + pattrs.get("id") + " " + mostSpecific);
 
+                            // FIXME Clarify we have *pivot* here!
+
                             // See if "#parentId <tag>" is enough...
-                            By tryingTag = By.cssSelector("#" + pattrs.get("id") + " " + tagName);
+                            By tryingTag = By.cssSelector(idPrefix(parentId) + " " + tagName);
+//                            System.out.println("====> tryingTag = " + tryingTag);
+
                             if (isUnique(tryingTag, original)) {
                                 results.add(tryingTag);
                                 parent = null; // FIXME ugh, vile way to break out of outer loop
@@ -250,7 +275,7 @@ public class PagesTest {
                                 }
 
                                 // By trying = By.xpath(".//*[@" + eachGoodAttr.getKey() + "='" + eachGoodAttr.getValue() + "']");
-                                By trying = By.cssSelector("#" + pattrs.get("id") + " " + tagName + "[" + eachGoodAttr.getKey() + "='" + eachGoodAttr.getValue() + "']");
+                                By trying = By.cssSelector(idPrefix(parentId) + " " + tagName + "[" + eachGoodAttr.getKey() + "='" + eachGoodAttr.getValue() + "']");
                                 System.out.println("+++ Trying parent-based... " + trying);
                                 if (isUnique(trying, original)) {
                                     results.add(trying);
@@ -261,14 +286,41 @@ public class PagesTest {
                                     // What else...?
                                 }
                             }
-
-//                            if (isUnique( newGuess, original)) {
-//                                results.add(newGuess);
-//                                break;
-//                            }
                         }
 
-                        if (parent == null || parent.getTagName().equals("html")) {
+                        pattrs.remove("class");
+                        pattrs.remove("id");
+                        pattrs.remove("disabled");
+                        pattrs.remove("style");
+                        pattrs.remove("gh");  // FIXME Gmail!
+                        pattrs.remove("cellpadding");
+                        pattrs.remove("tabindex");
+                        pattrs.remove("lang");
+
+                        // Need to filter attrs!!!
+                        for (Entry<String, String> eachGoodParentAttr : pattrs.entrySet()) {
+
+                            // FIXME Clarify we have *POSSIBLE pivot* here!
+
+                            // By trying = By.xpath(".//*[@" + eachGoodAttr.getKey() + "='" + eachGoodAttr.getValue() + "']");
+                            By trying = By.cssSelector(parent.getTagName() + "[" + eachGoodParentAttr.getKey() + "='" + eachGoodParentAttr.getValue() + "']");
+                            System.out.println("+++ Trying parent-based Attr... " + trying);
+                            // System.out.println("+++ Trying... " + trying);
+                            if (isUnique(trying, original)) {
+                                results.add(trying);
+                                parent = null; // FIXME ugh, vile way to break out of outer loop
+                                break;
+                            }
+                        }
+
+                        if (parent == null) {
+                            break;
+                        }
+
+                        By got = findWayFromLeafToPossiblePivot(original, mostSpecific, parent);
+                        if (got != null && isUnique(got, original)) {
+                            results.add(got);
+                            parent = null; // FIXME ugh, vile way to break out of outer loop
                             break;
                         }
                     }
@@ -276,6 +328,56 @@ public class PagesTest {
             }
 
             return results;
+        }
+
+        private By findWayFromLeafToPossiblePivot(WebElement leaf, String originalsOwnClause, WebElement pivot) {
+            System.out.println("====== FROM " + leaf + " to " + pivot);
+
+            List<String> sels = new ArrayList<>();
+
+            WebElement parent = leaf;
+            while ( /* parent != null && */ (parent = parent.findElement(By.xpath(".."))) != null) {
+                // System.out.println("Try: " + parent);
+                if (parent.getTagName().equals("html") || parent.equals(pivot)) {
+                    break;
+                }
+
+                List<WebElement> sibs = parent.findElements(By.xpath("preceding-sibling::*"));
+                if (sibs.isEmpty()) {
+                    continue;
+                }
+                sels.add("div:nth-child(" + (sibs.size() + 1) + ")");
+            }
+
+            // System.out.println("======> sels " + sels);
+
+            if (sels.isEmpty()) {  // FIXME Genericise this method!!!!!
+                return null;
+            }
+
+            ////////////////////////////////////
+
+            Map<String, String> pattrs = attrs(getWrappedDriver(), pivot);
+//            System.out.println("==> parent: " + parent.getTagName() + " = " + pattrs);
+
+            final String parentId = pattrs.get("id");
+            if (hasString(parentId) && !Ids.isGeneratedString(parentId)) {  // Need to check other intrinsic props of the parent!
+                sels.add( idPrefix(parentId) );
+            }
+            else {
+                System.out.println("Got nth-child, but no good pivot - skip");
+                return null;  // Ugh, not a good pivot!
+            }
+
+            // FIXME We probably *should* use > rather than ' ' if we *can*
+            By trying = By.cssSelector( Joiner.on(' ').join( Lists.reverse(sels) ) + " " + originalsOwnClause);
+            System.out.println("======> trying " + trying);
+
+            return trying;
+        }
+
+        private String idPrefix(final String rawId) {
+            return "#" + rawId.replaceAll(":", "\\\\3A ");
         }
 
         private boolean isNonSemantic( String value) {
@@ -342,7 +444,7 @@ public class PagesTest {
         return (Map<String, String>) js.executeScript("var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;", elem);
     }
 
-    // @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     private void testNoChange( final OurWebDriverWrapper wd, final By by) {
         final WebElement original = wd.findElement(by);
 
