@@ -33,8 +33,8 @@ public class PagesTest {
     @Test
     public void testGmailPage() {
         driver.get(new File("src/test/resources/gmail.html").toURI().toString());
-//        testElement(driver, By.xpath("//*[@id=\":kj\"]/span"),
-//                  /* ==> */ By.cssSelector(""));
+        testElement(driver, By.xpath("//*[@id=\":kj\"]/span"),
+                  /* ==> */ By.cssSelector(""));
 
         // //*[@id=":ki"]/td[5]/div[1]/span
         // div[role='main'] table tr:nth-child(1) td:nth-child(5) div:nth-child(1) span
@@ -133,7 +133,7 @@ public class PagesTest {
             final String tagName = original.getTagName();
 
             if (originalSelector instanceof By.ById) {
-                final Map<String, String> attrs = attrs(getWrappedDriver(), original);
+                final Map<String, String> attrs = attributes(getWrappedDriver(), original);
 
                 final String id = attrs.get("id");  // must be set!!
                 if (!Ids.isGeneratedString(id)) {
@@ -155,7 +155,7 @@ public class PagesTest {
             }
 
             if (originalSelector instanceof By.ByCssSelector || originalSelector instanceof By.ByXPath) {
-                final Map<String, String> attrs = attrs(getWrappedDriver(), original);
+                final Map<String, String> attrs = attributes(getWrappedDriver(), original);
 
                 final String id = attrs.get("id");
                 // Need a quality/generated check on this Id!
@@ -204,17 +204,8 @@ public class PagesTest {
                     }
                 }
 
-                attrs.remove("class");
-                attrs.remove("id");
-                attrs.remove("disabled");
-                attrs.remove("style");
-                attrs.remove("gh");  // FIXME Gmail!
-                attrs.remove("cellpadding");
-                attrs.remove("tabindex");
-                attrs.remove("lang");
-
                 // Need to filter attrs!!!
-                for (Entry<String, String> eachGoodAttr : attrs.entrySet()) {
+                for (Entry<String, String> eachGoodAttr : Attributes.filterQuality(attrs).entrySet()) {
                     // By trying = By.xpath(".//*[@" + eachGoodAttr.getKey() + "='" + eachGoodAttr.getValue() + "']");
                     By trying = By.cssSelector(tagName + "[" + eachGoodAttr.getKey() + "='" + eachGoodAttr.getValue() + "']");
                     // System.out.println("+++ Trying... " + trying);
@@ -239,7 +230,7 @@ public class PagesTest {
 
                 if (results.isEmpty()) { // ???
                     final String selector = originalSelector.toString();
-                    final List<String> clauses = Splitter.onPattern("[> ]").trimResults().omitEmptyStrings().splitToList( selector.substring( selector.indexOf(':') + 1) );
+                    final List<String> clauses = Splitter.onPattern("[> /]").trimResults().omitEmptyStrings().splitToList( selector.substring( selector.indexOf(':') + 1) );
                     final String mostSpecific = clauses.get( clauses.size() - 1);
 //                    System.out.println("==> clauses = " + clauses);
 
@@ -249,7 +240,7 @@ public class PagesTest {
                             break;
                         }
 
-                        Map<String, String> pattrs = attrs(getWrappedDriver(), parent);
+                        Map<String, String> pattrs = attributes(getWrappedDriver(), parent);
                         System.out.println("==> parent: " + parent.getTagName() + " = " + pattrs);
 
                         final String parentId = pattrs.get("id");
@@ -269,7 +260,7 @@ public class PagesTest {
                             }
 
                             // FIXME Ugh, duplication
-                            for (Entry<String, String> eachGoodAttr : attrs.entrySet()) {
+                            for (Entry<String, String> eachGoodAttr : Attributes.filterQuality(attrs).entrySet()) {
                                 if (tagName.equals("input") && eachGoodAttr.getKey().equals("value") && isNonSemantic( eachGoodAttr.getValue() )) {
                                     continue;  // non-semantic
                                 }
@@ -288,18 +279,11 @@ public class PagesTest {
                             }
                         }
 
-                        pattrs.remove("class");
-                        pattrs.remove("id");
-                        pattrs.remove("disabled");
-                        pattrs.remove("style");
-                        pattrs.remove("gh");  // FIXME Gmail!
-                        pattrs.remove("cellpadding");
-                        pattrs.remove("tabindex");
-                        pattrs.remove("lang");
+                        if (parent == null) {
+                            break;
+                        }
 
-                        // Need to filter attrs!!!
-                        for (Entry<String, String> eachGoodParentAttr : pattrs.entrySet()) {
-
+                        for (Entry<String, String> eachGoodParentAttr : Attributes.filterQuality(pattrs).entrySet()) {
                             // FIXME Clarify we have *POSSIBLE pivot* here!
 
                             // By trying = By.xpath(".//*[@" + eachGoodAttr.getKey() + "='" + eachGoodAttr.getValue() + "']");
@@ -357,7 +341,7 @@ public class PagesTest {
 
             ////////////////////////////////////
 
-            Map<String, String> pattrs = attrs(getWrappedDriver(), pivot);
+            Map<String, String> pattrs = attributes(getWrappedDriver(), pivot);
 //            System.out.println("==> parent: " + parent.getTagName() + " = " + pattrs);
 
             final String parentId = pattrs.get("id");
@@ -365,8 +349,18 @@ public class PagesTest {
                 sels.add( idPrefix(parentId) );
             }
             else {
-                System.out.println("Got nth-child, but no good pivot - skip");
-                return null;  // Ugh, not a good pivot!
+                final Map<String,String> goodAttrs = Attributes.filterQuality(pattrs);
+
+                if (!goodAttrs.isEmpty()) {
+                    for (Entry<String, String> eachGoodParentAttr : goodAttrs.entrySet()) {
+                        sels.add(parent.getTagName() + "[" + eachGoodParentAttr.getKey() + "='" + eachGoodParentAttr.getValue() + "']");
+                        break;  // Ugh, really only allow *one* ?!?!?
+                    }
+                }
+                else {
+                    System.out.println("Got nth-child, but no good pivot - skip");
+                    return null;  // Ugh, not a good pivot!
+                }
             }
 
             // FIXME We probably *should* use > rather than ' ' if we *can*
@@ -399,15 +393,6 @@ public class PagesTest {
             return (tried.size() == 1 && original.equals(tried.get(0)));
         }
 
-//        private By verify( By selector, WebElement original) {
-//            List<WebElement> tried = getWrappedDriver().findElements(selector);
-//            // System.out.println("=> " + tried);
-//            if (tried.size() != 1 || !original.equals(tried.get(0))) {
-//                throw new RuntimeException("Suggestion invalid!: " + selector);
-//            }
-//            return selector;
-//        }
-
         @Override
         public WebElement findElement( final By by) {
             final WebElement original = getWrappedDriver().findElement(by);
@@ -438,13 +423,12 @@ public class PagesTest {
     private static final Predicate<String> CAN_USE_TEXT_TAGS = Predicates.in(Arrays.asList("option","td","var"));
 
     @SuppressWarnings("unchecked")
-    private static Map<String, String> attrs( WebDriver driver, WebElement elem) {
+    private static Map<String, String> attributes( WebDriver driver, WebElement elem) {
         final JavascriptExecutor js = (JavascriptExecutor) driver;
         // *Much* much more efficient than keep calling element.attribute()
         return (Map<String, String>) js.executeScript("var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;", elem);
     }
 
-    @SuppressWarnings("unchecked")
     private void testNoChange( final OurWebDriverWrapper wd, final By by) {
         final WebElement original = wd.findElement(by);
 
