@@ -21,6 +21,24 @@ public class PagesTest {
     OurWebDriverWrapper driver = new OurWebDriverWrapper( new HtmlUnitDriver(true) );
 
     @Test
+    public void testCustomPage() {
+        driver.get(new File("src/test/resources/test.html").toURI().toString());
+        testElement(driver, By.cssSelector("#myForm > input:nth-child(1)"),
+                  /* ==> */ By.cssSelector("input[attr='quality']"), By.cssSelector("input[value='123']"));
+        testElement(driver, By.cssSelector("#myForm > input:nth-child(2)"),
+                  /* ==> */ By.cssSelector("input[value='address']"));
+        testNoChange(driver, By.cssSelector("#myForm > input:nth-child(3)"));
+
+        testNoChange(driver, By.cssSelector("body > article:nth-child(2)"));
+        testNoChange(driver, By.cssSelector("body > article:nth-child(3)"));
+        
+        testNoChange(driver, By.cssSelector("footer"));
+
+        testElement(driver, By.cssSelector("span"),
+                  /* ==> */ By.id("bar"));
+    }
+
+    @Test
     public void testGmailPage() {
         driver.get(new File("src/test/resources/gmail.html").toURI().toString());
         testElement(driver, By.xpath("//*[@id=\":kj\"]/span"),
@@ -87,10 +105,10 @@ public class PagesTest {
                   /* ==> */ By.cssSelector("a[href='/cbeust/AnkoMaterialSamples']"), By.cssSelector("a[title='cbeust/AnkoMaterialSamples']"));
 
         testElement(driver, By.cssSelector("body > table > tbody > tr > td:nth-child(5) > span"),
-                  /* ==> */ By.className("special"));
+                  /* ==> */ By.cssSelector("span[class='special']"));
 
         testElement(driver, By.xpath("/html/body/table/tbody/tr/td[5]/span"),
-                  /* ==> */ By.className("special"));
+                  /* ==> */ By.cssSelector("span[class='special']"));
 
         testElement(driver, By.cssSelector("body > table > tbody > tr > td:nth-child(6) > span"),
                   /* ==> */ By.cssSelector("span[foo='bar']"));
@@ -115,7 +133,7 @@ public class PagesTest {
     private void testNoChange( final OurWebDriverWrapper wd, final By by) {
         final WebElement original = wd.findElement(by);
 
-        final List<By> newBys = wd.getImprovedSelector(original, by);
+        final List<By> newBys = wd.getImprovedSelector(original, by.toString());
         // final List<By> o = Lists.newArrayList(by);
 
         // assertThat( newBys.toArray( new By[0] ), is( new By[]{by}) );
@@ -126,6 +144,6 @@ public class PagesTest {
         final WebElement original = wd.findElement(by);
         final List<By> expectations = Lists.newArrayList(expectedBys);
 
-        assertThat( wd.getImprovedSelector(original, by), is(expectations));
+        assertThat( wd.getImprovedSelector(original, by.toString()), is(expectations));
     }
 }
