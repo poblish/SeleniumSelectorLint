@@ -11,7 +11,7 @@ import com.google.common.collect.Maps;
 
 public class Attributes {
 
-    private static Predicate<String> ACCEPT = not(in(Arrays.asList("class","id","disabled","style","gh","cellpadding","tabindex","lang")));
+    private static Predicate<String> ACCEPT = not(in(Arrays.asList("class","id","disabled","style","gh","cellpadding","tabindex","lang","onclick")));
 
     public Attributes() {
     }

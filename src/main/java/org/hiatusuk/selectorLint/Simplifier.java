@@ -20,11 +20,8 @@ public class Simplifier {
 
     public void handleLocalClass(final WebElement original, final String tagName, final Map<String, String> attrs, final List<By> ioResults) {
         // Need to filter, or at least *score* these!
-        String[] classes = Classes.filter( attrs.get("class") );
-        for (String eachClass : classes) {  // Will never be empty strings
-            // By trying = By.className(eachClass);
-            // By trying = By.cssSelector(tagName + "." + cssEscape(eachClass));
-            By trying = By.cssSelector(tagName + "[class='" + eachClass + "']");  // FIXME Prefer this, as more testable than By.className
+        for (String eachClass : Classes.filter( attrs.get("class") )) {  // Will never be empty strings
+            By trying = By.cssSelector(tagName + "." + CssUtils.cssEscape(eachClass));  // Best of all: more testable than By.className, handles multiple classnames 
             if (isUnique(trying, original)) {
                 ioResults.add(trying);
             }

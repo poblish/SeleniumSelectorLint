@@ -82,77 +82,81 @@ public class OurWebDriverWrapper extends WebDriverWrapper {
             }
         }
 
+        if (!results.isEmpty()) {  // Is this premature?!?
+            return results;
+        }
+
         // Now it gets more complex - what can we do to normalise...? Either parse and fix original selector or pick a much simpler, purer one?
         // So far, no Id, class, or attr has *uniquely* referenced us...
         // But we surely HAVE to check for some intrinsic attrs, otherwise we very likely will have to use nth-child or bail out.
 
-        if (results.isEmpty()) { // ???
-            final List<String> clauses = Splitter.onPattern("[> /]").trimResults().omitEmptyStrings().splitToList( originalSelectorString.substring( originalSelectorString.indexOf(':') + 1) );
-            final String mostSpecific = clauses.get( clauses.size() - 1);
+        final List<String> clauses = Splitter.onPattern("[> /]").trimResults().omitEmptyStrings().splitToList( originalSelectorString.substring( originalSelectorString.indexOf(':') + 1) );
+        final String mostSpecific = clauses.get( clauses.size() - 1);
 //                System.out.println("==> clauses = " + clauses);
 
-            WebElement parent = original;
-            while ((parent = parent.findElement(By.xpath(".."))) != null) {
-                if (parent.getTagName().equals("html")) {
+        WebElement parent = original;
+        while ((parent = parent.findElement(By.xpath(".."))) != null) {
+            System.out.println(":: " + parent);
+
+            if (parent.getTagName().equals("html")) {
+                break;
+            }
+
+            Map<String, String> pattrs = attributes(getWrappedDriver(), parent);
+            // System.out.println("==> parent: " + parent.getTagName() + " = " + pattrs);
+
+            final String parentId = pattrs.get("id");
+            if (hasString(parentId) && !Ids.isGeneratedString(parentId)) {  // Need to check other intrinsic props of the parent!
+//              By newGuess = By.cssSelector("#" + pattrs.get("id") + " " + mostSpecific);
+
+                // FIXME Clarify we have *pivot* here!
+
+                // See if "#parentId <tag>" is enough...
+                By tryingTag = By.cssSelector(idPrefix(parentId) + " " + tagName);
+//                        System.out.println("====> tryingTag = " + tryingTag);
+
+                if (simplifier.isUnique(tryingTag, original)) {
+                    results.add(tryingTag);
+                    parent = null; // FIXME ugh, vile way to break out of outer loop
                     break;
                 }
 
-                Map<String, String> pattrs = attributes(getWrappedDriver(), parent);
-                System.out.println("==> parent: " + parent.getTagName() + " = " + pattrs);
-
-                final String parentId = pattrs.get("id");
-                if (hasString(parentId) && !Ids.isGeneratedString(parentId)) {  // Need to check other intrinsic props of the parent!
-//                        By newGuess = By.cssSelector("#" + pattrs.get("id") + " " + mostSpecific);
-
-                    // FIXME Clarify we have *pivot* here!
-
-                    // See if "#parentId <tag>" is enough...
-                    By tryingTag = By.cssSelector(idPrefix(parentId) + " " + tagName);
-//                        System.out.println("====> tryingTag = " + tryingTag);
-
-                    if (simplifier.isUnique(tryingTag, original)) {
-                        results.add(tryingTag);
-                        parent = null; // FIXME ugh, vile way to break out of outer loop
-                        break;
+                // FIXME Ugh, duplication
+                for (Entry<String, String> eachGoodAttr : Attributes.filterQuality(attrs).entrySet()) {
+                    if (tagName.equals("input") && eachGoodAttr.getKey().equals("value") && simplifier.isNonSemantic( eachGoodAttr.getValue() )) {
+                        continue;  // non-semantic
                     }
-
-                    // FIXME Ugh, duplication
-                    for (Entry<String, String> eachGoodAttr : Attributes.filterQuality(attrs).entrySet()) {
-                        if (tagName.equals("input") && eachGoodAttr.getKey().equals("value") && simplifier.isNonSemantic( eachGoodAttr.getValue() )) {
-                            continue;  // non-semantic
-                        }
-
-                        // By trying = By.xpath(".//*[@" + eachGoodAttr.getKey() + "='" + eachGoodAttr.getValue() + "']");
-                        By trying = By.cssSelector(idPrefix(parentId) + " " + tagName + "[" + eachGoodAttr.getKey() + "='" + eachGoodAttr.getValue() + "']");
-                        System.out.println("+++ Trying parent-based... " + trying);
-                        if (simplifier.isUnique(trying, original)) {
-                            results.add(trying);
-                            return results;
-                        }
-                        else {
-                            // What else...?
-                        }
-                    }
-                }
-
-                for (Entry<String, String> eachGoodParentAttr : Attributes.filterQuality(pattrs).entrySet()) {
-                    // FIXME Clarify we have *POSSIBLE pivot* here!
 
                     // By trying = By.xpath(".//*[@" + eachGoodAttr.getKey() + "='" + eachGoodAttr.getValue() + "']");
-                    By trying = By.cssSelector(parent.getTagName() + "[" + eachGoodParentAttr.getKey() + "='" + eachGoodParentAttr.getValue() + "']");
-                    System.out.println("+++ Trying parent-based Attr... " + trying);
-                    // System.out.println("+++ Trying... " + trying);
+                    By trying = By.cssSelector(idPrefix(parentId) + " " + tagName + "[" + eachGoodAttr.getKey() + "='" + eachGoodAttr.getValue() + "']");
+                    System.out.println("+++ Trying parent-based... " + trying);
                     if (simplifier.isUnique(trying, original)) {
                         results.add(trying);
                         return results;
                     }
+                    else {
+                        // What else...?
+                    }
                 }
+            }
 
-                By got = findWayFromLeafToPossiblePivot(original, mostSpecific, parent);
-                if (got != null && simplifier.isUnique(got, original)) {
-                    results.add(got);
+            for (Entry<String, String> eachGoodParentAttr : Attributes.filterQuality(pattrs).entrySet()) {
+                // FIXME Clarify we have *POSSIBLE pivot* here!
+
+                // By trying = By.xpath(".//*[@" + eachGoodAttr.getKey() + "='" + eachGoodAttr.getValue() + "']");
+                By trying = By.cssSelector(parent.getTagName() + "[" + eachGoodParentAttr.getKey() + "='" + eachGoodParentAttr.getValue() + "']");
+                System.out.println("+++ Trying parent-based Attr... " + trying);
+                // System.out.println("+++ Trying... " + trying);
+                if (simplifier.isUnique(trying, original)) {
+                    results.add(trying);
                     return results;
                 }
+            }
+
+            By got = findWayFromLeafToPossiblePivot(original, mostSpecific, parent);
+            if (got != null && simplifier.isUnique(got, original)) {
+                results.add(got);
+                return results;
             }
         }
 
@@ -189,6 +193,13 @@ public class OurWebDriverWrapper extends WebDriverWrapper {
         Map<String, String> pattrs = attributes(getWrappedDriver(), pivot);
 //        System.out.println("==> parent: " + parent.getTagName() + " = " + pattrs);
 
+//        if (Tags.isGoodQuality(pivot)) {
+//            By trying = By.tagName(tagName);
+//            if (simplifier.isUnique(trying, original)) {
+//                
+//            }
+//        }
+
         final String parentId = pattrs.get("id");
         if (hasString(parentId) && !Ids.isGeneratedString(parentId)) {  // Need to check other intrinsic props of the parent!
             sels.add( idPrefix(parentId) );
@@ -210,7 +221,7 @@ public class OurWebDriverWrapper extends WebDriverWrapper {
 
         // FIXME We probably *should* use > rather than ' ' if we *can*
         By trying = By.cssSelector( Joiner.on(' ').join( Lists.reverse(sels) ) + " " + originalsOwnClause);
-        System.out.println("======> trying " + trying);
+        System.out.println("=> Try pivot query... " + trying);
 
         return trying;
     }

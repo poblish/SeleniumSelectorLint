@@ -23,6 +23,9 @@ public class PagesTest {
     @Test
     public void testCustomPage() {
         driver.get(new File("src/test/resources/test.html").toURI().toString());
+        testElement(driver, By.cssSelector("div.clear-fix.foo.bar.blah.blue"),
+                  /* ==> */ By.cssSelector("div.foo"), By.cssSelector("div.bar"), By.cssSelector("div.blah"));
+
         testElement(driver, By.cssSelector("#myForm > input:nth-child(1)"),
                   /* ==> */ By.cssSelector("input[attr='quality']"), By.cssSelector("input[value='123']"));
         testElement(driver, By.cssSelector("#myForm > input:nth-child(2)"),
@@ -31,7 +34,11 @@ public class PagesTest {
 
         testNoChange(driver, By.cssSelector("body > article:nth-child(2)"));
         testNoChange(driver, By.cssSelector("body > article:nth-child(3)"));
-        
+
+        // Basically the same, but easier to test than the previous syntax
+        testElement(driver, By.name("myName is John?"),
+                  /* ==> */ By.cssSelector("p[name='myName is John?']"));
+
         testNoChange(driver, By.cssSelector("footer"));
 
         testElement(driver, By.cssSelector("span"),
@@ -42,7 +49,7 @@ public class PagesTest {
     public void testGmailPage() {
         driver.get(new File("src/test/resources/gmail.html").toURI().toString());
         testElement(driver, By.xpath("//*[@id=\":kj\"]/span"),
-                  /* ==> */ By.cssSelector(""));
+                  /* ==> */ By.cssSelector("table tr:nth-child(1) > td:nth-child(5) > div:nth-child(1) > span"));
 
         // //*[@id=":ki"]/td[5]/div[1]/span
         // div[role='main'] table tr:nth-child(1) td:nth-child(5) div:nth-child(1) span
@@ -98,17 +105,17 @@ public class PagesTest {
 
         testElement(driver, By.id("id-23467233"), By.cssSelector("p[niceattr='niceValue']"));
         testElement(driver, By.cssSelector("p[id*='id-23467233']"), By.cssSelector("p[niceattr='niceValue']"));
-        testElement(driver, By.id("id-ad4ad45e"), By.cssSelector("p[class='goodSemanticClass']"));
+        testElement(driver, By.id("id-ad4ad45e"), By.cssSelector("p.goodSemanticClass"));
 
         // FIXME 'title' better than 'href'
         testElement(driver, By.cssSelector("#dashboard > div.news.column.two-thirds > div:nth-child(2) > div > div > div.title > a:nth-child(3)"),
                   /* ==> */ By.cssSelector("a[href='/cbeust/AnkoMaterialSamples']"), By.cssSelector("a[title='cbeust/AnkoMaterialSamples']"));
 
         testElement(driver, By.cssSelector("body > table > tbody > tr > td:nth-child(5) > span"),
-                  /* ==> */ By.cssSelector("span[class='special']"));
+                  /* ==> */ By.cssSelector("span.special"));
 
         testElement(driver, By.xpath("/html/body/table/tbody/tr/td[5]/span"),
-                  /* ==> */ By.cssSelector("span[class='special']"));
+                  /* ==> */ By.cssSelector("span.special"));
 
         testElement(driver, By.cssSelector("body > table > tbody > tr > td:nth-child(6) > span"),
                   /* ==> */ By.cssSelector("span[foo='bar']"));
