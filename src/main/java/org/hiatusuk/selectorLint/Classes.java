@@ -11,7 +11,7 @@ import com.google.common.collect.Iterables;
 
 public class Classes {
 
-    private static Predicate<String> ACCEPT = not(in(Arrays.asList("clear-fix","bold","blue")));
+    private static Predicate<String> ACCEPT = not(in(Arrays.asList("","clear-fix","bold","blue")));
 
     public static Iterable<String> filter(final String classStr) {
         if (classStr == null || classStr.isEmpty()) {

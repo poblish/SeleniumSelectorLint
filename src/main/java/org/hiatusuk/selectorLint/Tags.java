@@ -9,7 +9,7 @@ import com.google.common.base.Predicates;
 
 public class Tags {
 
-    private static final Predicate<String> SEMANTIC_TAGS = Predicates.in(Arrays.asList("article","body","footer","head","table"));
+    private static final Predicate<String> SEMANTIC_TAGS = Predicates.in(Arrays.asList("article","body","footer","head","table","h1"));
 
     public static boolean isGoodQuality( WebElement elem) {
         return SEMANTIC_TAGS.apply( elem.getTagName().toLowerCase() );
