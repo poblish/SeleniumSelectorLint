@@ -31,7 +31,7 @@ public class Simplifier {
     public void handleLocalAttrs(final WebElement original, final String tagName, final Map<String, String> attrs, final List<By> ioResults) {
         // Need to filter attrs!!!
         for (Entry<String, String> eachGoodAttr : Attributes.filterQuality(attrs).entrySet()) {
-            if (tagName.equals("input") && eachGoodAttr.getKey().equals("value") && isNonSemantic( eachGoodAttr.getValue() )) {
+            if (tagName.equals("input") && eachGoodAttr.getKey().equals("value") && Attributes.isNonSemantic( eachGoodAttr.getValue() )) {
                 continue;  // non-semantic
             }
 
