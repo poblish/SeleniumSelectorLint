@@ -3,12 +3,10 @@ package org.hiatusuk.selectorLint;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import java.util.Collection;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.hiatusuk.selectorLint.tree.Node;
-import org.hiatusuk.selectorLint.tree.NodeRelation;
+import org.hiatusuk.selectorLint.tree.NodeVisitor;
 import org.hiatusuk.selectorLint.tree.Path;
 import org.testng.annotations.Test;
 
@@ -39,29 +37,19 @@ public class StackToSelectorTest {
         n_5.addChild(n_4, /* direct */ true);
         testPaths(n_5, "[Path{score=3, path=div > div:nth-child(10) div.other}, Path{score=3, path=div > div:nth-child(10) div.title}, Path{score=5, path=div > div:nth-child(10) > div > div > div.other}, Path{score=5, path=div > div:nth-child(10) > div > div > div.title}]");
 
-        Node n_6 = new Node("#dashboard");
-        n_6.addChild(n_5, /* direct */ true);
-        n_6.addChild(n_4, false);
-        testPaths(n_6, "[Path{score=3, path=#dashboard div:nth-child(10) div.other}, Path{score=3, path=#dashboard div:nth-child(10) div.title}, Path{score=4, path=#dashboard > div > div:nth-child(10) div.other}, Path{score=4, path=#dashboard > div > div:nth-child(10) div.title}, Path{score=5, path=#dashboard div:nth-child(10) > div > div > div.other}, Path{score=5, path=#dashboard div:nth-child(10) > div > div > div.title}, Path{score=6, path=#dashboard > div > div:nth-child(10) > div > div > div.other}, Path{score=6, path=#dashboard > div > div:nth-child(10) > div > div > div.title}]");
+        Node n_6_a = new Node("#dashboard");
+        n_6_a.addChild(n_5, /* direct */ true);
+        n_6_a.addChild(n_4, false);
+        testPaths(n_6_a, "[Path{score=3, path=#dashboard div:nth-child(10) div.other}, Path{score=3, path=#dashboard div:nth-child(10) div.title}, Path{score=4, path=#dashboard > div > div:nth-child(10) div.other}, Path{score=4, path=#dashboard > div > div:nth-child(10) div.title}, Path{score=5, path=#dashboard div:nth-child(10) > div > div > div.other}, Path{score=5, path=#dashboard div:nth-child(10) > div > div > div.title}, Path{score=6, path=#dashboard > div > div:nth-child(10) > div > div > div.other}, Path{score=6, path=#dashboard > div > div:nth-child(10) > div > div > div.title}]");
+        Node n_6_b = new Node("article[attr='goodValue']");
+        n_6_b.addChild(n_5, /* direct */ true);
+        n_6_b.addChild(n_4, false);
+        testPaths(n_6_b, "[Path{score=3, path=article[attr='goodValue'] div:nth-child(10) div.other}, Path{score=3, path=article[attr='goodValue'] div:nth-child(10) div.title}, Path{score=4, path=article[attr='goodValue'] > div > div:nth-child(10) div.other}, Path{score=4, path=article[attr='goodValue'] > div > div:nth-child(10) div.title}, Path{score=5, path=article[attr='goodValue'] div:nth-child(10) > div > div > div.other}, Path{score=5, path=article[attr='goodValue'] div:nth-child(10) > div > div > div.title}, Path{score=6, path=article[attr='goodValue'] > div > div:nth-child(10) > div > div > div.other}, Path{score=6, path=article[attr='goodValue'] > div > div:nth-child(10) > div > div > div.title}]");
     }
 
     private void testPaths(Node top, String exp) {
-        Set<Path> paths = new TreeSet<>();
-        visitNodes(top, /* irrelevant */ false, paths, new Path());
+        Set<Path> paths = new NodeVisitor().visit(top);
         System.out.println( paths.size() + " paths: " + paths);
         assertThat( paths.toString(), is(exp));
-    }
-
-    private void visitNodes(final Node currNode, boolean isDirect, Collection<Path> paths, Path currPath) {
-        currPath.append(currNode.getSelector(), isDirect);
-
-        if (currNode.isLeaf()) {
-            paths.add(currPath);
-            return;
-        }
-
-        for (final NodeRelation each : currNode) {
-            visitNodes(each.getTarget(), each.isDirectParent(), paths, new Path(currPath));
-        }
     }
 }

@@ -50,10 +50,6 @@ public class PagesTest {
         driver.get(new File("src/test/resources/gmail.html").toURI().toString());
         testElement(driver, By.xpath("//*[@id=\":kj\"]/span"),
                   /* ==> */ By.cssSelector("table tr:nth-child(1) > td:nth-child(5) > div:nth-child(1) > span"));
-
-        // //*[@id=":ki"]/td[5]/div[1]/span
-        // div[role='main'] table tr:nth-child(1) td:nth-child(5) div:nth-child(1) span
-        // //div[@role='main']//table//tr[1]/td[5]/div[1]/span
         
     }
 
@@ -129,7 +125,7 @@ public class PagesTest {
                   /* ==> */ By.cssSelector("li[data-attr='MyItem']"));
 
         testElement(driver, By.cssSelector("#dashboard > div.news.column.two-thirds > div:nth-child(10) > div > div > div.title"),
-                  /* ==> */ By.cssSelector("#dashboard div:nth-child(10) div.title"));
+                  /* ==> */ By.cssSelector("div.news > div:nth-child(10) div.title"));
     }
 
     @AfterSuite

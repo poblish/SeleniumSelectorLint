@@ -25,13 +25,17 @@ public class Path implements Comparable<Path> {
         score++;
     }
 
+    public String getPath() {
+        return currentPath.toString();
+    }
+
     @Override
     public int compareTo( Path other) {
         int sizeVal = Ints.compare(score, other.score);  // Smallest is best/first
         if (sizeVal != 0) {
             return sizeVal;
         }
-        return currentPath.toString().compareTo( other.currentPath.toString() );
+        return getPath().compareTo( other.getPath() );
     }
 
     @Override
