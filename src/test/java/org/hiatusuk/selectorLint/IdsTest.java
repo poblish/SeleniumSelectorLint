@@ -2,7 +2,7 @@ package org.hiatusuk.selectorLint;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hiatusuk.selectorLint.Ids.isGeneratedString;
+import static org.hiatusuk.selectorLint.Semantic.isGeneratedString;
 
 import org.testng.annotations.Test;
 

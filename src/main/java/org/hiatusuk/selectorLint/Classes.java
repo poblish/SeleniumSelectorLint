@@ -16,7 +16,7 @@ public class Classes {
 
         @Override
         public boolean apply(final String inClass) {
-            if (IGNORE_CLASSES.apply(inClass) || inClass.length() < 3 || Attributes.isNonSemantic(inClass)) {
+            if (IGNORE_CLASSES.apply(inClass) || inClass.length() < 3 || Semantic.isNonSemantic(inClass)) {
                 return false;
             }
 
