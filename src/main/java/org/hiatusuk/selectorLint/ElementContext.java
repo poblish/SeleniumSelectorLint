@@ -12,6 +12,8 @@ public interface ElementContext {
 
     String getOriginalSelector();
 
+    boolean skippedUselessElement();
+
     void setHasSomeProps();
     void setAddedGoodNonUniqueNode();
 }

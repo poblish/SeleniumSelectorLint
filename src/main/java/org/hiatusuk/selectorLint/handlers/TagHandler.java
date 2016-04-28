@@ -44,7 +44,7 @@ public class TagHandler implements ElementHandler {
             }
         }
 
-        final Node newNode = nodes.add( ctxt.currentTagName(), true);
+        final Node newNode = nodes.add( ctxt.currentTagName(), !ctxt.skippedUselessElement());
 
         ctxt.setHasSomeProps();
         ctxt.setAddedGoodNonUniqueNode();

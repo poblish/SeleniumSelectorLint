@@ -33,6 +33,7 @@ public class Simplifier {
 
     /* FIXME */ private boolean hasSomeProps;
     /* FIXME */ private boolean addedGoodNonUniqueNode;
+    private boolean skippedUselessElement;
 
     private WebElement currentElement;
     private String tagName;
@@ -88,6 +89,11 @@ public class Simplifier {
             @Override
             public WebElement element() {
                 return Simplifier.this.currentElement;
+            }
+
+            @Override
+            public boolean skippedUselessElement() {
+                return Simplifier.this.skippedUselessElement;
             }
         };
 
@@ -167,23 +173,30 @@ public class Simplifier {
 
             final WebElement parent = currentElement.findElement(By.xpath(".."));
 
-            if (!addedGoodNonUniqueNode) {
-                List<WebElement> precedingSibs = currentElement.findElements(By.xpath("preceding-sibling::" + tagName));
-                List<WebElement> followingSibs = currentElement.findElements(By.xpath("following-sibling::" + tagName));
-
-                if (precedingSibs.isEmpty() && followingSibs.isEmpty()) {
-                    addNode( tagName, isLeaf || hasSomeProps);
-                }
-                else {
-                    addNode( tagName + ":nth-child(" + (precedingSibs.size() + 1) + ")", false);
-                }
+            if (tagName.equals("tbody")) {
+                skippedUselessElement = true;
             }
+            else {
+                skippedUselessElement = false;
 
-            // System.out.println("** ITERATE curr ==> " + currentLevelSelectors);
-            // System.out.println("**         prev ==> " + childLevelSelectors);
+                if (!addedGoodNonUniqueNode) {
+                    List<WebElement> precedingSibs = currentElement.findElements(By.xpath("preceding-sibling::" + tagName));
+                    List<WebElement> followingSibs = currentElement.findElements(By.xpath("following-sibling::" + tagName));
+    
+                    if (precedingSibs.isEmpty() && followingSibs.isEmpty()) {
+                        addNode( tagName, isLeaf || hasSomeProps);
+                    }
+                    else {
+                        addNode( tagName + ":nth-child(" + (precedingSibs.size() + 1) + ")", false);
+                    }
+                }
 
-            childLevelSelectors = currentLevelSelectors;
-            currentLevelSelectors = new ArrayList<>();
+                // System.out.println("** ITERATE curr ==> " + currentLevelSelectors);
+                // System.out.println("**         prev ==> " + childLevelSelectors);
+    
+                childLevelSelectors = currentLevelSelectors;
+                currentLevelSelectors = new ArrayList<>();
+            }
 
             currentElement = parent;
             isLeaf = false;
