@@ -45,7 +45,7 @@ public class Simplifier {
 
         tags = new TagHandler("article","body","footer","head","table","h1");
         ids = new IdsHandler();
-        classes = new ClassHandler();
+        classes = new ClassHandler( Arrays.asList("clear-fix","bold","blue"), /* Min: */ 3);
         attrsHandler = new AttributesHandler( Arrays.asList("class","id","disabled","style","gh","cellpadding","tabindex","lang","onclick"), Arrays.asList("aria-labelledby"));
     }
 
