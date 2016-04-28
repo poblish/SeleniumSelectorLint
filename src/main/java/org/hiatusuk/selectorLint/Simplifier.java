@@ -187,7 +187,7 @@ public class Simplifier {
                         addNode( tagName, isLeaf || hasSomeProps);
                     }
                     else {
-                        addNode( tagName + ":nth-child(" + (precedingSibs.size() + 1) + ")", false);
+                        addNode( tagName + ":nth-child(" + (precedingSibs.size() + 1) + ")", true);
                     }
                 }
 

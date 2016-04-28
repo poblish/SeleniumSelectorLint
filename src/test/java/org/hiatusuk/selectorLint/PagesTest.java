@@ -49,8 +49,7 @@ public class PagesTest {
     public void testGmailPage() {
         driver.get(new File("src/test/resources/gmail.html").toURI().toString());
         testElement(driver, By.xpath("//*[@id=\":kj\"]/span"),
-                  /* ==> */ By.cssSelector("table tr:nth-child(1) > td:nth-child(5) > div:nth-child(1) > span"));
-        
+                  /* ==> */ By.cssSelector("table tr:nth-child(1) > td:nth-child(5) > div:nth-child(1) > span[name='The Tool Team']"));
     }
 
     @Test
