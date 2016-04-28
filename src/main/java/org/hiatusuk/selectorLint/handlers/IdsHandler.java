@@ -26,9 +26,8 @@ public class IdsHandler implements ElementHandler {
             }
 
             if (ctxt.isLeaf()) {
-                if (tester.ok( By.id(id) )) {
-                    return true;
-                }
+                tester.ok( By.id(id) );  // assume/require PASS
+                return true;
             }
 
             final Node newNode = nodes.add("#" + id, true);
@@ -41,13 +40,13 @@ public class IdsHandler implements ElementHandler {
                 if (ctxt.getOriginalSelector().equals( sel.toString() )) {
                     return true;
                 }
-                if (tester.ok(sel)) {
-                    return true;
-                }
+
+                tester.ok(sel);  // assume/require PASS
+                return true;
             }
 
-            ctxt.setHasSomeProps();
-            ctxt.setAddedGoodNonUniqueNode();
+            // ctxt.setHasSomeProps();
+            // ctxt.setAddedGoodNonUniqueNode();
         }
 
         return false;

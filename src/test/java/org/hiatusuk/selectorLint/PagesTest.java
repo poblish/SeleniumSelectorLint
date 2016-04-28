@@ -1,8 +1,7 @@
 package org.hiatusuk.selectorLint;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 import java.io.File;
 import java.util.List;
@@ -23,6 +22,13 @@ public class PagesTest {
     @Test
     public void testCustomPage() {
         driver.get(new File("src/test/resources/test.html").toURI().toString());
+
+        // Basic WebDriver stuff, mainly for coverage
+        assertThat( driver.getTitle(), is("Foo Bar"));
+        assertThat( driver.getPageSource(), containsString("Foo Bar"));
+        assertThat( driver.getCurrentUrl(), endsWith("test.html"));
+        assertThat( driver.getWindowHandles().contains( driver.getWindowHandle() ), is(true));
+
         testElement(driver, By.cssSelector("div.clear-fix.foo.bar.blah.blue"),
                   /* ==> */ By.cssSelector("div.foo"), By.cssSelector("div.bar"), By.cssSelector("div.blah"));
 
@@ -43,6 +49,10 @@ public class PagesTest {
 
         testElement(driver, By.cssSelector("span"),
                   /* ==> */ By.id("bar"));
+
+        // Test findElements() API
+        testElements(driver, By.cssSelector("span"),
+                   /* ==> */ By.id("bar"));
     }
 
     @Test
@@ -147,5 +157,14 @@ public class PagesTest {
         final List<By> expectations = Lists.newArrayList(expectedBys);
 
         assertThat( wd.getImprovedSelector(original, by.toString()), is(expectations));
+    }
+
+    private void testElements( final OurWebDriverWrapper wd, final By by, By... expectedBys) {
+        final List<WebElement> originals = wd.findElements(by);
+        final List<By> expectations = Lists.newArrayList(expectedBys);
+
+        for (WebElement eachElement : originals) {
+            assertThat( wd.getImprovedSelector(eachElement, by.toString()), is(expectations));
+        }
     }
 }

@@ -47,6 +47,14 @@ public class StackToSelectorTest {
         testPaths(n_6_b, "[Path{score=3, path=article[attr='goodValue'] div:nth-child(10) div.other}, Path{score=3, path=article[attr='goodValue'] div:nth-child(10) div.title}, Path{score=4, path=article[attr='goodValue'] > div > div:nth-child(10) div.other}, Path{score=4, path=article[attr='goodValue'] > div > div:nth-child(10) div.title}, Path{score=5, path=article[attr='goodValue'] div:nth-child(10) > div > div > div.other}, Path{score=5, path=article[attr='goodValue'] div:nth-child(10) > div > div > div.title}, Path{score=6, path=article[attr='goodValue'] > div > div:nth-child(10) > div > div > div.other}, Path{score=6, path=article[attr='goodValue'] > div > div:nth-child(10) > div > div > div.title}]");
     }
 
+    @Test public void testSimpleRelation() {
+        final Node n1 = new Node("div");
+        final Node n2 = new Node("span");
+        n1.addChild(n2, true);
+        assertThat( n1.iterator().next().toString(), is("Relation{target=Node{selector=span, children=[]}, direct?=true}"));
+        assertThat( n2.iterator().hasNext(), is(false));
+    }
+
     private void testPaths(Node top, String exp) {
         Set<Path> paths = new NodeVisitor().visit(top);
         System.out.println( paths.size() + " paths: " + paths);
