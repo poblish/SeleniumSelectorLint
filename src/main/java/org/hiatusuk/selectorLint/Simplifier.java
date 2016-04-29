@@ -128,7 +128,7 @@ public class Simplifier {
         lastPivotNode = null;
 
         while (true) {
-            System.out.println("> current = " + currentElement + ", lastPivot = " + lastPivotNode + ", currSels = " + currentLevelSelectors);
+            // System.out.println("> current = " + currentElement + ", lastPivot = " + lastPivotNode + ", currSels = " + currentLevelSelectors);
 
             tagName = currentElement.getTagName();
             elementAttrs = attributes(driver, currentElement);

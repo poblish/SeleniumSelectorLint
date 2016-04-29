@@ -24,8 +24,11 @@ public class OurWebDriverWrapper extends WebDriverWrapper {
         final WebElement original = getWrappedDriver().findElement(by);
 
         final List<By> newBys = getImprovedSelector(original, by.toString());
-        if (!newBys.isEmpty()) {
-            System.out.println("> Suggestions... " + newBys);
+        if (newBys.isEmpty()) {
+            System.out.println("> NO Suggestions for [" + by + "]");
+        }
+        else {
+            System.out.println("> Suggestions for [" + by + "]... " + newBys);
         }
 
         return original;
