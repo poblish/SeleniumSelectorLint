@@ -50,7 +50,7 @@ public class Simplifier {
         attrsHandler = new AttributesHandler( Arrays.asList("class","id","disabled","style","gh","cellpadding","tabindex","lang","onclick"), Arrays.asList("aria-labelledby"));
     }
 
-    public List<By> getImprovedSelector( final WebElement original, final String originalSelectorString) {
+    public List<By> getImprovedSelector( final List<WebElement> originalMatches, final String originalSelectorString) {
 
         /////////////////////////////////////////////////////////////////
 
@@ -101,12 +101,18 @@ public class Simplifier {
 
             @Override
             public boolean ok(final By selector) {
-                if (isUnique(selector, original)) {
+                if (isUnique(selector, originalMatches)) {
                     results.add(selector);
                     return true;
                 }
                 return false;
-            }};
+            }
+
+            private boolean isUnique(final By selector, final List<WebElement> originals) {
+                List<WebElement> tried = driver.findElements(selector);
+                return tried.equals(originals);
+            }
+        };
 
         final NodeAdder nodes = new NodeAdder() {
 
@@ -117,7 +123,7 @@ public class Simplifier {
 
         /////////////////////////////////////////////////////////////////
 
-        currentElement = original;
+        currentElement = originalMatches.get(0);  // FIXME Need to check more than one!
 
         results.clear();
 
@@ -156,10 +162,7 @@ public class Simplifier {
                 if (CAN_USE_TEXT_TAGS.apply( tagName )) {  // Anything else?!?
                     hasSomeProps = true;
 
-                    By trying = By.xpath("//" + tagName + "[text()='" + currentElement.getText() + "']");
-                    if (isUnique(trying, original)) {
-                        results.add(trying);
-                    }
+                    tester.ok( By.xpath("//" + tagName + "[text()='" + currentElement.getText() + "']") );
                 }
             }
     
@@ -230,10 +233,5 @@ public class Simplifier {
         final JavascriptExecutor js = (JavascriptExecutor) driver;
         // *Much* much more efficient than keep calling element.attribute()
         return (Map<String, String>) js.executeScript("var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;", elem);
-    }
-
-    private boolean isUnique(final By selector, final WebElement original) {
-        List<WebElement> tried = driver.findElements(selector);
-        return (tried.size() == 1 && original.equals(tried.get(0)));
     }
 }

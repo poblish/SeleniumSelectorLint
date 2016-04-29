@@ -1,5 +1,6 @@
 package org.hiatusuk.selectorLint;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -15,15 +16,15 @@ public class OurWebDriverWrapper extends WebDriverWrapper {
         simplifier = new Simplifier(originalDriver);
     }
 
-    public List<By> getImprovedSelector( final WebElement original, final String originalSelectorString) {
-        return simplifier.getImprovedSelector( original, originalSelectorString);
+    public List<By> getImprovedSelector( final List<WebElement> originalMatches, final String originalSelectorString) {
+        return simplifier.getImprovedSelector( originalMatches, originalSelectorString);
     }
 
     @Override
     public WebElement findElement( final By by) {
         final WebElement original = getWrappedDriver().findElement(by);
 
-        final List<By> newBys = getImprovedSelector(original, by.toString());
+        final List<By> newBys = getImprovedSelector(Collections.singletonList(original), by.toString());
         if (newBys.isEmpty()) {
             System.out.println("> NO Suggestions for [" + by + "]");
         }
@@ -38,11 +39,12 @@ public class OurWebDriverWrapper extends WebDriverWrapper {
     public List<WebElement> findElements( final By by) {
         final List<WebElement> originals = getWrappedDriver().findElements(by);
 
-        for (WebElement each : originals) {
-            final List<By> newBys = getImprovedSelector(each, by.toString());
-            if (!newBys.isEmpty()) {
-                System.out.println("> Suggestions... " + newBys);
-            }
+        final List<By> newBys = getImprovedSelector(originals, by.toString());
+        if (newBys.isEmpty()) {
+            System.out.println("> NO Suggestions for [" + by + "]");
+        }
+        else {
+            System.out.println("> Suggestions for [" + by + "]... " + newBys);
         }
 
         return originals;

@@ -4,6 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -145,7 +146,7 @@ public class PagesTest {
     private void testNoChange( final OurWebDriverWrapper wd, final By by) {
         final WebElement original = wd.findElement(by);
 
-        final List<By> newBys = wd.getImprovedSelector(original, by.toString());
+        final List<By> newBys = wd.getImprovedSelector(Collections.singletonList(original), by.toString());
         // final List<By> o = Lists.newArrayList(by);
 
         // assertThat( newBys.toArray( new By[0] ), is( new By[]{by}) );
@@ -156,15 +157,13 @@ public class PagesTest {
         final WebElement original = wd.findElement(by);
         final List<By> expectations = Lists.newArrayList(expectedBys);
 
-        assertThat( wd.getImprovedSelector(original, by.toString()), is(expectations));
+        assertThat( wd.getImprovedSelector(Collections.singletonList(original), by.toString()), is(expectations));
     }
 
     private void testElements( final OurWebDriverWrapper wd, final By by, By... expectedBys) {
-        final List<WebElement> originals = wd.findElements(by);
+        final List<WebElement> originalMatches = wd.findElements(by);
         final List<By> expectations = Lists.newArrayList(expectedBys);
 
-        for (WebElement eachElement : originals) {
-            assertThat( wd.getImprovedSelector(eachElement, by.toString()), is(expectations));
-        }
+        assertThat( wd.getImprovedSelector(originalMatches, by.toString()), is(expectations));
     }
 }
