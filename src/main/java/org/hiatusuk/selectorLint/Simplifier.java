@@ -34,6 +34,7 @@ public class Simplifier {
     /* FIXME */ private boolean hasSomeProps;
     /* FIXME */ private boolean addedGoodNonUniqueNode;
     private boolean skippedUselessElement;
+    private boolean lastPivotSetForThisLevel;
 
     private WebElement currentElement;
     private String tagName;
@@ -46,7 +47,7 @@ public class Simplifier {
 
         tags = new TagHandler("article","body","footer","head","table","h1");
         ids = new IdsHandler();
-        classes = new ClassHandler( Arrays.asList("clear-fix","bold","blue"), /* Min: */ 3);
+        classes = new ClassHandler( Arrays.asList("clear-fix","bold","blue","large-2"), /* Min: */ 3);
         attrsHandler = new AttributesHandler( Arrays.asList("class","id","disabled","style","gh","cellpadding","tabindex","lang","onclick"), Arrays.asList("aria-labelledby"));
     }
 
@@ -139,7 +140,7 @@ public class Simplifier {
             tagName = currentElement.getTagName();
             elementAttrs = attributes(driver, currentElement);
  
-            hasSomeProps = addedGoodNonUniqueNode = false;
+            hasSomeProps = addedGoodNonUniqueNode = lastPivotSetForThisLevel = false;
 
             if (tags.getImprovedSelectors(ctxt, nodes, tester)) {
                 return results;
@@ -220,8 +221,10 @@ public class Simplifier {
         
         if (lastPivotNode == null) {
             lastPivotNode = n;
+            lastPivotSetForThisLevel = true;
         }
-        else {
+        else if (!lastPivotSetForThisLevel) {
+            // Don't add to a pivot we've only just set, i.e. for current element!
             n.addChild(lastPivotNode, false);
         }
 

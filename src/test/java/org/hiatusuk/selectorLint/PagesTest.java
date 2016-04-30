@@ -21,6 +21,23 @@ public class PagesTest {
     OurWebDriverWrapper driver = new OurWebDriverWrapper( new HtmlUnitDriver(true) );
 
     @Test
+    public void testChallengingDOM() {
+        driver.get(new File("src/test/resources/challenging_dom.html").toURI().toString());
+
+        testElement(driver, By.id("3004f560-f119-0133-3382-0ecd3084fc74"),
+                        /* ==> */ By.cssSelector("div.columns > a:nth-child(1)"));
+        testElement(driver, By.id("300516d0-f119-0133-3383-0ecd3084fc74"),
+                        /* ==> */ By.cssSelector("a.alert"));
+        testElement(driver, By.id("30051e90-f119-0133-3384-0ecd3084fc74"),
+                        /* ==> */ By.cssSelector("a.success"));
+
+        testElement(driver, By.cssSelector("#content > div > div > div > div.large-10.columns > table > tbody > tr:nth-child(1) > td:nth-child(7) > a:nth-child(1)"),
+                  /* ==> */ By.cssSelector("table tr:nth-child(1) a[href='#edit']"));
+        testElement(driver, By.xpath("//*[@id=\"content\"]/div/div/div/div[2]/table/tbody/tr[4]/td[7]/a[2]"),
+                  /* ==> */ By.cssSelector("table tr:nth-child(4) a[href='#delete']"));
+    }
+
+    @Test
     public void testCustomPage() {
         driver.get(new File("src/test/resources/test.html").toURI().toString());
 
@@ -60,7 +77,7 @@ public class PagesTest {
     public void testGmailPage() {
         driver.get(new File("src/test/resources/gmail.html").toURI().toString());
         testElement(driver, By.xpath("//*[@id=\":kj\"]/span"),
-                  /* ==> */ By.cssSelector("table tr:nth-child(1) > td:nth-child(5) > div:nth-child(1) > span[name='The Tool Team']"));
+                  /* ==> */ By.cssSelector("table tr:nth-child(1) > td:nth-child(5) > div:nth-child(1) > span"));
     }
 
     @Test

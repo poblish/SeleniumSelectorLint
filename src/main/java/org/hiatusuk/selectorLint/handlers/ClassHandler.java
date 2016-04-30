@@ -27,6 +27,8 @@ public class ClassHandler implements ElementHandler {
     }
 
     public boolean getImprovedSelectors(final ElementContext ctxt, final NodeAdder nodes, final MatchTester tester) {
+        boolean gotGoodClass = false;
+
         // Need to filter, or at least *score* these!
         for (String eachClass : filter( ctxt.attributes().get("class") )) {  // Will never be empty strings
 
@@ -46,12 +48,12 @@ public class ClassHandler implements ElementHandler {
 
             for (Path each : paths) {
                 if (tester.ok( By.cssSelector( each.getPath() ) )) {
-                    return true;
+                    return true; // FIXME Should set flag and *not* exit, i.e. gotGoodClass = true;
                 }
             }
         }
 
-        return false;
+        return gotGoodClass;
     }
 
     private final Predicate<String> acceptRule = new Predicate<String>() {
