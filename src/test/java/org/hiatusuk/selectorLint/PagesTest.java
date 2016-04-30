@@ -35,6 +35,12 @@ public class PagesTest {
                   /* ==> */ By.cssSelector("table tr:nth-child(1) a[href='#edit']"));
         testElement(driver, By.xpath("//*[@id=\"content\"]/div/div/div/div[2]/table/tbody/tr[4]/td[7]/a[2]"),
                   /* ==> */ By.cssSelector("table tr:nth-child(4) a[href='#delete']"));
+
+        testElement(driver, By.cssSelector("#content > div > div > div > div.large-10.columns > table > thead > tr > th:nth-child(6)"),
+                  /* ==> */ By.xpath("//th[text()='Diceret']"));
+
+        testElement(driver, By.cssSelector("#content > div > div > div > div.large-10.columns > table > tbody > tr:nth-child(8) > td:nth-child(5)"),
+                  /* ==> */ By.xpath("//td[text()='Consequuntur7']"));
     }
 
     @Test

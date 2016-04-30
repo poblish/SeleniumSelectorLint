@@ -19,7 +19,7 @@ import com.google.common.base.Predicates;
 
 public class Simplifier {
 
-    private static final Predicate<String> CAN_USE_TEXT_TAGS = Predicates.in(Arrays.asList("option","td","var"));
+    private static final Predicate<String> CAN_USE_TEXT_TAGS = Predicates.in(Arrays.asList("option","td","th","var"));
 
     private final ElementHandler tags;
     private final ElementHandler ids;
