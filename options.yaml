@@ -1,0 +1,45 @@
+default:
+- allowTextComparisons: true
+- rules:
+  - generatedOrNonSemantic:
+    - ignore:
+      - 0
+      - 1
+      - /^(id-|:|\\3A )/
+      - uuids
+      - afn
+- handlerOrdering:
+  - Tags:
+    - important:
+      - head
+      - body
+      - h1
+      - article
+      - footer
+      - table
+    - ignore:
+      - tbody
+  - Id:
+    - ignore:
+      - generatedOrNonSemantic
+  - Classes:
+    - minAcceptableClassLength: 3
+    - ignore:
+      - generatedOrNonSemantic
+      - clear-fix
+      - bold
+      - blue
+      - large-2
+  - Attributes:
+    - ignore:  # class and id automatically ignored
+      - generatedOrNonSemantic
+      - cellpadding
+      - cellspacing
+      - disabled
+      - gh
+      - lang
+      - onclick
+      - style
+      - tabindex
+    - checkValue:
+      - aria-labelledby
