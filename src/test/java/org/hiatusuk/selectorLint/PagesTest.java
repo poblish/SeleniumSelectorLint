@@ -17,8 +17,8 @@ import com.google.common.collect.Lists;
 
 public class PagesTest {
 
-    // OurWebDriverWrapper driver = new OurWebDriverWrapper(new FirefoxDriver());
-    OurWebDriverWrapper driver = new OurWebDriverWrapper( new HtmlUnitDriver(true) );
+    // WebDriverWrapper driver = new WebDriverWrapper(new FirefoxDriver());
+    WebDriverWrapper driver = new WebDriverWrapper( new HtmlUnitDriver(true) );
 
     @Test
     public void testChallengingDOM() {
@@ -166,7 +166,7 @@ public class PagesTest {
         driver.quit();
     }
 
-    private void testNoChange( final OurWebDriverWrapper wd, final By by) {
+    private void testNoChange( final WebDriverWrapper wd, final By by) {
         final WebElement original = wd.findElement(by);
 
         final List<By> newBys = wd.getImprovedSelector(Collections.singletonList(original), by.toString());
@@ -176,14 +176,14 @@ public class PagesTest {
         assertThat(newBys, empty());
     }
 
-    private void testElement( final OurWebDriverWrapper wd, final By by, By... expectedBys) {
+    private void testElement( final WebDriverWrapper wd, final By by, By... expectedBys) {
         final WebElement original = wd.findElement(by);
         final List<By> expectations = Lists.newArrayList(expectedBys);
 
         assertThat( wd.getImprovedSelector(Collections.singletonList(original), by.toString()), is(expectations));
     }
 
-    private void testElements( final OurWebDriverWrapper wd, final By by, By... expectedBys) {
+    private void testElements( final WebDriverWrapper wd, final By by, By... expectedBys) {
         final List<WebElement> originalMatches = wd.findElements(by);
         final List<By> expectations = Lists.newArrayList(expectedBys);
 

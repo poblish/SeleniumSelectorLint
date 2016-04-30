@@ -6,6 +6,7 @@ import org.hiatusuk.selectorLint.*;
 import org.hiatusuk.selectorLint.tree.Node;
 import org.hiatusuk.selectorLint.tree.NodeVisitor;
 import org.hiatusuk.selectorLint.tree.Path;
+import org.hiatusuk.selectorLint.utils.Strings;
 import org.openqa.selenium.By;
 
 public class IdsHandler implements ElementHandler {

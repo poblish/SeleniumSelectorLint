@@ -1,4 +1,4 @@
-package org.hiatusuk.selectorLint;
+package org.hiatusuk.selectorLint.utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

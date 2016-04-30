@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.hiatusuk.selectorLint.handlers.*;
 import org.hiatusuk.selectorLint.tree.Node;
+import org.hiatusuk.selectorLint.utils.Strings;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;

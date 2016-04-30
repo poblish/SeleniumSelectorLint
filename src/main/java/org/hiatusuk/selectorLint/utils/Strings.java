@@ -1,4 +1,4 @@
-package org.hiatusuk.selectorLint;
+package org.hiatusuk.selectorLint.utils;
 
 public class Strings {
 

@@ -2,7 +2,7 @@ package org.hiatusuk.selectorLint;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hiatusuk.selectorLint.CssUtils.cssEscape;
+import static org.hiatusuk.selectorLint.utils.CssUtils.cssEscape;
 
 import org.testng.annotations.Test;
 
