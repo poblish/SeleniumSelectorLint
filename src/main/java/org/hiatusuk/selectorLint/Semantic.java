@@ -1,5 +1,6 @@
 package org.hiatusuk.selectorLint;
 
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class Semantic {
@@ -11,6 +12,15 @@ public class Semantic {
     }
 
     public static boolean isGeneratedString(final String val) {
-        return /* Hack: */ val.equals("afn") || PATT.matcher(val).find();
+        return /* Hack: */ val.equals("afn") || PATT.matcher(val).find() || isUUID(val);
+    }
+
+    private static boolean isUUID(String string) {
+        try {
+            UUID.fromString(string);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 }
