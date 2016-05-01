@@ -1,37 +1,37 @@
-default:
-- allowTextComparisons: true
-- rules:
-  - generatedOrNonSemantic:
-    - ignore:
+name: default
+allowTextComparisons: true
+rules:
+  generatedOrNonSemantic:
+    ignore:
       - 0
       - 1
       - /^(id-|:|\\3A )/
       - uuids
       - afn
-- handlerOrdering:
-  - Tags:
-    - important:
+handlerOrdering:
+  Tags:
+    important:
       - head
       - body
       - h1
       - article
       - footer
       - table
-    - ignore:
+    ignore:
       - tbody
-  - Id:
-    - ignore:
+  Id:
+    ignore:
       - generatedOrNonSemantic
-  - Classes:
-    - minAcceptableClassLength: 3
-    - ignore:
+  Classes:
+    minAcceptableClassLength: 3
+    ignore:
       - generatedOrNonSemantic
       - clear-fix
       - bold
       - blue
       - large-2
-  - Attributes:
-    - ignore:  # class and id automatically ignored
+  Attributes:
+    ignore:  # class and id automatically ignored
       - generatedOrNonSemantic
       - cellpadding
       - cellspacing
@@ -41,5 +41,5 @@ default:
       - onclick
       - style
       - tabindex
-    - checkValue:
+    checkValue:
       - aria-labelledby
