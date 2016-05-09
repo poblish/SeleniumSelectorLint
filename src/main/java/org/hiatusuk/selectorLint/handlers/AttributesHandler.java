@@ -78,4 +78,9 @@ public class AttributesHandler implements ElementHandler {
 
         return false;
     }
+
+    @Override
+    public boolean shouldSkip( String tagName) {  // Ugly, FIXME
+        return false;
+    }
 }

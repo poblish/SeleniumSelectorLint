@@ -45,11 +45,13 @@ public class IdsHandler implements ElementHandler {
                 tester.ok(sel);  // assume/require PASS
                 return true;
             }
-
-            // ctxt.setHasSomeProps();
-            // ctxt.setAddedGoodNonUniqueNode();
         }
 
+        return false;
+    }
+
+    @Override
+    public boolean shouldSkip( String tagName) {  // Ugly, FIXME
         return false;
     }
 }

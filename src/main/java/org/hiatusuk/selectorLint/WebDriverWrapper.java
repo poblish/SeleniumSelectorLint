@@ -1,5 +1,7 @@
 package org.hiatusuk.selectorLint;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -14,16 +16,21 @@ import org.openqa.selenium.internal.WrapsDriver;
 public class WebDriverWrapper implements WebDriver, WrapsDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen {
 
     private WebDriver original;
+    private boolean logSuggestions = true;
 
     private final Simplifier simplifier;
 
-    public WebDriverWrapper(WebDriver originalDriver) {
-        this.original = originalDriver;
-        simplifier = new Simplifier(originalDriver);
+    public WebDriverWrapper(WebDriver originalDriver, final Simplifier simplifier) {
+        this.original = checkNotNull(originalDriver);
+        this.simplifier = checkNotNull(simplifier);
     }
 
     public List<By> getImprovedSelector( final List<WebElement> originalMatches, final String originalSelectorString) {
         return simplifier.getImprovedSelector( originalMatches, originalSelectorString);
+    }
+
+    public void logSuggestions(final boolean logSuggestions) {
+        this.logSuggestions = logSuggestions;
     }
 
     @Override
@@ -33,11 +40,14 @@ public class WebDriverWrapper implements WebDriver, WrapsDriver, JavascriptExecu
         double diffMs = (System.nanoTime() - startNs) / 1E6;
 
         final List<By> newBys = getImprovedSelector(Collections.singletonList(original), by.toString());
-        if (newBys.isEmpty()) {
-            System.out.println("> NO Suggestions for [" + by + "]");
-        }
-        else {
-            System.out.println("> Suggestions for [" + by + "]" + /* " (" + (int)( diffMs * 1000)/1000.0 + " msecs)" + */ "... " + newBys);
+
+        if (logSuggestions) {
+            if (newBys.isEmpty()) {
+                System.out.println("> NO Suggestions for [" + by + "]");
+            }
+            else {
+                System.out.println("> Suggestions for [" + by + "]" + /* " (" + (int)( diffMs * 1000)/1000.0 + " msecs)" + */ "... " + newBys);
+            }
         }
 
         return original;
@@ -50,11 +60,14 @@ public class WebDriverWrapper implements WebDriver, WrapsDriver, JavascriptExecu
         double diffMs = (System.nanoTime() - startNs) / 1E6;
 
         final List<By> newBys = getImprovedSelector(originals, by.toString());
-        if (newBys.isEmpty()) {
-            System.out.println("> NO Suggestions for [" + by + "]");
-        }
-        else {
-            System.out.println("> Suggestions for [" + by + "]" + /* " (" + (int)( diffMs * 1000)/1000.0 + " msecs)" + */ "... " + newBys);
+
+        if (logSuggestions) {
+            if (newBys.isEmpty()) {
+                System.out.println("> NO Suggestions for [" + by + "]");
+            }
+            else {
+                System.out.println("> Suggestions for [" + by + "]" + /* " (" + (int)( diffMs * 1000)/1000.0 + " msecs)" + */ "... " + newBys);
+            }
         }
 
         return originals;

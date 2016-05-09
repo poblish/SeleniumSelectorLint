@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.hiatusuk.selectorLint.handlers.*;
+import org.hiatusuk.selectorLint.handlers.ElementHandler;
 import org.hiatusuk.selectorLint.tree.Node;
 import org.hiatusuk.selectorLint.utils.Strings;
 import org.openqa.selenium.By;
@@ -22,10 +22,8 @@ public class Simplifier {
 
     private static final Predicate<String> CAN_USE_TEXT_TAGS = Predicates.in(Arrays.asList("option","td","th","var"));
 
-    private final ElementHandler tags;
-    private final ElementHandler ids;
-    private final ElementHandler classes;
-    private final ElementHandler attrsHandler;
+    private Options options;
+    private boolean convertCss = false;
 
     private final WebDriver driver;
     private final List<By> results = new ArrayList<>();
@@ -45,11 +43,14 @@ public class Simplifier {
 
     public Simplifier(final WebDriver inDriver) {
         driver = checkNotNull(inDriver);
+    }
 
-        tags = new TagHandler("article","body","footer","head","table","h1");
-        ids = new IdsHandler();
-        classes = new ClassHandler( Arrays.asList("clear-fix","bold","blue","large-2"), /* Min: */ 3);
-        attrsHandler = new AttributesHandler( Arrays.asList("class","id","disabled","style","gh","cellpadding","tabindex","lang","onclick"), Arrays.asList("aria-labelledby"));
+    public void setOptions(final Options opts) {
+        options = checkNotNull(opts);
+    }
+
+    public void convertCssToXPath(final boolean convertCss) {
+        this.convertCss = convertCss;
     }
 
     public List<By> getImprovedSelector( final List<WebElement> originalMatches, final String originalSelectorString) {
@@ -143,20 +144,10 @@ public class Simplifier {
  
             hasSomeProps = addedGoodNonUniqueNode = lastPivotSetForThisLevel = false;
 
-            if (tags.getImprovedSelectors(ctxt, nodes, tester)) {
-                return results;
-            }
-
-            if (ids.getImprovedSelectors(ctxt, nodes, tester)) {
-                return results;
-            }
-
-            if (classes.getImprovedSelectors(ctxt, nodes, tester)) {
-                return results;
-            }
-
-            if (attrsHandler.getImprovedSelectors(ctxt, nodes, tester)) {
-                return results;
+            for (ElementHandler eachHandler : options.handlers()) {
+                if (eachHandler.getImprovedSelectors(ctxt, nodes, tester)) {
+                    return results;
+                }
             }
     
             // Try XPath text() matches
@@ -176,14 +167,16 @@ public class Simplifier {
                 return results;
             }
 
-            final WebElement parent = currentElement.findElement(By.xpath(".."));
+            skippedUselessElement = false;
 
-            if (tagName.equals("tbody")) {
-                skippedUselessElement = true;
+            for (ElementHandler eachHandler : options.handlers()) {
+                if (eachHandler.shouldSkip(tagName)) {
+                    skippedUselessElement = true;
+                    break;
+                }
             }
-            else {
-                skippedUselessElement = false;
 
+            if (!skippedUselessElement) {
                 if (!addedGoodNonUniqueNode) {
                     List<WebElement> precedingSibs = currentElement.findElements(By.xpath("preceding-sibling::" + tagName));
                     List<WebElement> followingSibs = currentElement.findElements(By.xpath("following-sibling::" + tagName));
@@ -203,7 +196,7 @@ public class Simplifier {
                 currentLevelSelectors = new ArrayList<>();
             }
 
-            currentElement = parent;
+            currentElement = currentElement.findElement(By.xpath(".."));  // up a level
             isLeaf = false;
         }
 

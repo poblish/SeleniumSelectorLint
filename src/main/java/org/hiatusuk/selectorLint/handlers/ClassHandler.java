@@ -76,4 +76,9 @@ public class ClassHandler implements ElementHandler {
         // FIXME Either filter by quality or *score*
         return Iterables.filter( Arrays.asList( classStr.split(" ") ), acceptRule);
     }
+
+    @Override
+    public boolean shouldSkip( String tagName) {  // Ugly, FIXME
+        return false;
+    }
 }

@@ -1,6 +1,6 @@
 package org.hiatusuk.selectorLint.handlers;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import org.hiatusuk.selectorLint.ElementContext;
@@ -18,9 +18,11 @@ import com.google.common.base.Predicates;
 public class TagHandler implements ElementHandler {
 
     private final Predicate<String> semanticTags;
+    private final Predicate<String> ignoreTags;
 
-    public TagHandler(final String... semanticTags) {
-        this.semanticTags = Predicates.in(Arrays.asList(semanticTags));
+    public TagHandler(final List<String> semanticTags, final List<String> ignoreTags) {
+        this.semanticTags = Predicates.in(semanticTags);
+        this.ignoreTags = Predicates.in(ignoreTags);
     }
 
     private boolean isGoodQuality( WebElement elem) {
@@ -59,5 +61,10 @@ public class TagHandler implements ElementHandler {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean shouldSkip(final String tagName) {
+        return ignoreTags.apply(tagName);
     }
 }
