@@ -17,7 +17,7 @@ import org.openqa.selenium.By;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
-public class ClassHandler implements ElementHandler {
+public class ClassHandler extends AbstractBaseHandler {
 
     private final Predicate<String> ignoreClassNames;
     private final int minAcceptableClassLength;
@@ -75,10 +75,5 @@ public class ClassHandler implements ElementHandler {
 
         // FIXME Either filter by quality or *score*
         return Iterables.filter( Arrays.asList( classStr.split(" ") ), acceptRule);
-    }
-
-    @Override
-    public boolean shouldSkip( String tagName) {  // Ugly, FIXME
-        return false;
     }
 }

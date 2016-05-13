@@ -9,7 +9,7 @@ import org.hiatusuk.selectorLint.tree.Path;
 import org.hiatusuk.selectorLint.utils.Strings;
 import org.openqa.selenium.By;
 
-public class IdsHandler implements ElementHandler {
+public class IdsHandler extends AbstractBaseHandler {
 
     public boolean getImprovedSelectors(final ElementContext ctxt, final NodeAdder nodes, final MatchTester tester) {
 
@@ -47,11 +47,6 @@ public class IdsHandler implements ElementHandler {
             }
         }
 
-        return false;
-    }
-
-    @Override
-    public boolean shouldSkip( String tagName) {  // Ugly, FIXME
         return false;
     }
 }

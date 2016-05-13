@@ -15,7 +15,7 @@ import org.openqa.selenium.WebElement;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
-public class TagHandler implements ElementHandler {
+public class TagHandler extends AbstractBaseHandler {
 
     private final Predicate<String> semanticTags;
     private final Predicate<String> ignoreTags;

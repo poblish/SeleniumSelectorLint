@@ -19,7 +19,7 @@ import org.openqa.selenium.By;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
-public class AttributesHandler implements ElementHandler {
+public class AttributesHandler extends AbstractBaseHandler {
 
     private final Predicate<String> ignoreKeys;
     private final Predicate<String> keysNeedSemanticValue;
@@ -76,11 +76,6 @@ public class AttributesHandler implements ElementHandler {
             }
         }
 
-        return false;
-    }
-
-    @Override
-    public boolean shouldSkip( String tagName) {  // Ugly, FIXME
         return false;
     }
 }
