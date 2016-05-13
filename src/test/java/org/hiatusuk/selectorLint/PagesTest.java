@@ -6,10 +6,15 @@ import static org.hamcrest.Matchers.*;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver.Navigation;
+import org.openqa.selenium.WebDriver.TargetLocator;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.interactions.Keyboard;
+import org.openqa.selenium.interactions.Mouse;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.Test;
 
@@ -52,6 +57,12 @@ public class PagesTest {
         assertThat( driver.getPageSource(), containsString("Foo Bar"));
         assertThat( driver.getCurrentUrl(), endsWith("test.html"));
         assertThat( driver.getWindowHandles().contains( driver.getWindowHandle() ), is(true));
+        assertThat( driver.getKeyboard() instanceof Keyboard, is(true));
+        // assertThat( driver.getTouch() instanceof TouchScreen, is(true));
+        assertThat( driver.getMouse() instanceof Mouse, is(true));
+        assertThat( driver.switchTo() instanceof TargetLocator, is(true));
+        assertThat( driver.navigate() instanceof Navigation, is(true));
+        assertThat( driver.manage().getCookies() instanceof Set, is(true));
 
         testElement(driver, By.cssSelector("div.clear-fix.foo.bar.blah.blue"),
                   /* ==> */ By.cssSelector("div.foo"), By.cssSelector("div.bar"), By.cssSelector("div.blah"));
