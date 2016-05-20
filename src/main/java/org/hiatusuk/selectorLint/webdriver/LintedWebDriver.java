@@ -27,10 +27,6 @@ public class LintedWebDriver implements WebDriver, WrapsDriver, JavascriptExecut
         this.simplifier = checkNotNull(simplifier);
     }
 
-    public List<By> getImprovedSelector( final List<WebElement> originalMatches, final String originalSelectorString) {
-        return simplifier.getImprovedSelector( originalMatches, originalSelectorString);
-    }
-
     public void logSuggestions(final Logger logger) {
         this.suggestionsLogger = logger;
     }
@@ -41,7 +37,7 @@ public class LintedWebDriver implements WebDriver, WrapsDriver, JavascriptExecut
         final WebElement original = getWrappedDriver().findElement(by);
 //        double diffMs = (System.nanoTime() - startNs) / 1E6;
 
-        final List<By> newBys = getImprovedSelector(Collections.singletonList(original), by.toString());
+        final List<By> newBys = simplifier.getImprovedSelector(Collections.singletonList(original), by.toString());
 
         if (suggestionsLogger != null) {
             if (newBys.isEmpty()) {
@@ -61,7 +57,7 @@ public class LintedWebDriver implements WebDriver, WrapsDriver, JavascriptExecut
         final List<WebElement> originals = getWrappedDriver().findElements(by);
 //        double diffMs = (System.nanoTime() - startNs) / 1E6;
 
-        final List<By> newBys = getImprovedSelector(originals, by.toString());
+        final List<By> newBys = simplifier.getImprovedSelector(originals, by.toString());
 
         if (suggestionsLogger != null) {
             if (newBys.isEmpty()) {
