@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import org.hiatusuk.selectorLint.utils.Uuids;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Predicate;
 
 public class FilterPredicate implements Predicate<String> {
@@ -27,11 +28,6 @@ public class FilterPredicate implements Predicate<String> {
             if (eachIgnoreItem.startsWith("/")) {  // FIXME Should really pre-process these Pattern-strings to save recompiling
                 // System.out.println("Found pattern: " + eachIgnoreItem);
                 if (Pattern.compile(eachIgnoreItem.substring(1, eachIgnoreItem.length() - 1)).matcher(input).find()) {
-                    return false;
-                }
-            }
-            else if (eachIgnoreItem.equals("^emptyValue")) {
-                if (input.isEmpty()) {
                     return false;
                 }
             }

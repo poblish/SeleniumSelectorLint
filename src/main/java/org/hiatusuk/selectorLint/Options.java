@@ -69,15 +69,10 @@ public class Options {
                     break;
                 case "Attributes":
                     List<String> ignoreAttrs = (List<String>) handlerInfo.getValue().get("filterNames");
-                    List<String> checkValue = (List<String>) handlerInfo.getValue().get("filterValues");
                     ignoreAttrs.add("id");
                     ignoreAttrs.add("class");
-                    // System.out.println("Attrs: use:" + ignoreAttrs + " / " + checkValue);
-                    handler = new AttributesHandler( namedFilters, ignoreAttrs, checkValue);
-                    break;
-                case "Input Values":
-                    List<String> ignoreVals = (List<String>) handlerInfo.getValue().get("ignore");
-                    handler = new InputValuesHandler( namedFilters, ignoreVals);
+                    Map<String,List<String>> checkValues = (Map<String,List<String>>) handlerInfo.getValue().get("filterValues");
+                    handler = new AttributesHandler( namedFilters, ignoreAttrs, checkValues);
                     break;
                 default:
                     throw new UnsupportedOperationException();
@@ -89,12 +84,11 @@ public class Options {
         for (Entry<String,Object> rule : rules.entrySet()) {
             Map<String,List<String>> elems = (Map<String, List<String>>) rule.getValue();
             FilterPredicate pred = new FilterPredicate(elems);
-//            System.out.println("Rule '" + rule.getKey() + "': " + elems);
 
             namedFilters.put(rule.getKey(), pred);
         }
 
-        System.out.println("=> rules: " + rules);
+        // System.out.println("=> rules: " + rules);
 
         return this;
     }
@@ -102,10 +96,6 @@ public class Options {
     public Rules getNamedFilters() {
         return namedFilters;
     }
-
-//    public LinkedHashMap<String,Map<String,Object>> getHandlerOrdering() {
-//        return handlerOrdering;
-//    }
 
     public Iterable<ElementHandler> handlers() {
         return generatedHandlers;

@@ -1,14 +1,15 @@
 package org.hiatusuk.selectorLint.handlers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.hiatusuk.selectorLint.ElementContext;
+import org.hiatusuk.selectorLint.FilterPredicate;
 import org.hiatusuk.selectorLint.MatchTester;
 import org.hiatusuk.selectorLint.NodeAdder;
 import org.hiatusuk.selectorLint.Options.Rules;
-import org.hiatusuk.selectorLint.RulesBasedFilter;
 import org.hiatusuk.selectorLint.tree.Node;
 import org.hiatusuk.selectorLint.tree.NodeVisitor;
 import org.hiatusuk.selectorLint.tree.Path;
@@ -20,11 +21,13 @@ import com.google.common.base.Predicates;
 public class AttributesHandler extends AbstractBaseHandler {
 
     private final Predicate<String> ignoreKeys;
-    private final Predicate<String> keysNeedSemanticValue;
+    private final Map<String,List<String>> keysNeedSemanticValue;
+    private final Rules rules;
 
-    public AttributesHandler(final Rules rules, final List<String> ignoreAttributes, final List<String> keysNeedSemanticValue) {
+    public AttributesHandler(final Rules rules, final List<String> ignoreAttributes, final Map<String,List<String>> keysNeedSemanticValue) {
         this.ignoreKeys = Predicates.in(ignoreAttributes); // new RulesBasedFilter(rules, ignoreAttributes);
-        this.keysNeedSemanticValue = Predicates.in(keysNeedSemanticValue); // new RulesBasedFilter(rules, keysNeedSemanticValue);
+        this.keysNeedSemanticValue = keysNeedSemanticValue;
+        this.rules = rules;
     }
 
     public boolean getImprovedSelectors(final ElementContext ctxt, final NodeAdder nodes, final MatchTester tester) {
@@ -34,24 +37,29 @@ public class AttributesHandler extends AbstractBaseHandler {
                 continue;
             }
 
-            System.out.println(">>> TRY: " + ctxt.currentTagName() + "." + eachAttr.getKey());
+            // System.out.println(">>> TRY: " + ctxt.currentTagName() + "." + eachAttr.getKey());
 
-            if (keysNeedSemanticValue.apply(ctxt.currentTagName() + "." + eachAttr.getKey()) /* && Semantic.isNonSemantic( inEntry.getValue() ) */ ) {
-                // System.out.println("=> Attr FALSE for " + inEntry.getKey() + " / " + inEntry.getValue());
+            boolean filtered = false;
+            for (Entry<String,List<String>> eachSV : keysNeedSemanticValue.entrySet()) {
+
+                FilterPredicate fp = rules.get( eachSV.getKey().substring(1) );
+
+                // Is our attribute registered as one we should check? *Then* we can validate its value
+                if (eachSV.getValue().contains( ctxt.currentTagName() + "." + eachAttr.getKey() ) ||
+                    eachSV.getValue().contains( eachAttr.getKey() )) {
+                    // System.out.println(">>> FOUND for " + eachSV.getKey());
+
+                    if (!fp.apply( eachAttr.getValue() )) {
+                        // System.out.println(">>> SKIPPING " + ctxt.currentTagName() + "." + eachAttr.getKey() + ", contained in " + eachSV.getValue());
+                        filtered = true;
+                        break;
+                    }
+                }
+            }
+
+            if (filtered) {
                 continue;
             }
-            
-            if (keysNeedSemanticValue.apply(eachAttr.getKey()) /* && Semantic.isNonSemantic( inEntry.getValue() ) */ ) {
-                // System.out.println("=> Attr FALSE for " + inEntry.getKey() + " / " + inEntry.getValue());
-                continue;
-            }
-            
-//            if (eachGoodAttr.getValue().isEmpty()) {
-//                continue;
-//            }
-//            if (ctxt.currentTagName().equals("input") && eachGoodAttr.getKey().equals("value")) {
-//                continue;  // ignore these
-//            }
 
             ctxt.setHasSomeProps();
 
