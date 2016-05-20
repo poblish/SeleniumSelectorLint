@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 
 import java.util.Set;
 
+import org.hiatusuk.eqhash.EqHash;
 import org.hiatusuk.selectorLint.tree.Node;
 import org.hiatusuk.selectorLint.tree.NodeVisitor;
 import org.hiatusuk.selectorLint.tree.Path;
@@ -47,12 +48,28 @@ public class StackToSelectorTest {
         testPaths(n_6_b, "[Path{score=3, path=article[attr='goodValue'] div:nth-child(10) div.other}, Path{score=3, path=article[attr='goodValue'] div:nth-child(10) div.title}, Path{score=4, path=article[attr='goodValue'] > div > div:nth-child(10) div.other}, Path{score=4, path=article[attr='goodValue'] > div > div:nth-child(10) div.title}, Path{score=5, path=article[attr='goodValue'] div:nth-child(10) > div > div > div.other}, Path{score=5, path=article[attr='goodValue'] div:nth-child(10) > div > div > div.title}, Path{score=6, path=article[attr='goodValue'] > div > div:nth-child(10) > div > div > div.other}, Path{score=6, path=article[attr='goodValue'] > div > div:nth-child(10) > div > div > div.title}]");
     }
 
+    @Test public void testEqualsHash() {
+        Node n = new Node("div.title");
+        Node copy = new Node("div.title");
+        Node diff1 = new Node("div.title").addChild(n, true);
+        Node diff2 = new Node("div.xxx").addChild(n, true);
+        EqHash.testEqualsHashcode(n, copy, diff1, diff2);
+    }
+
     @Test public void testSimpleRelation() {
         final Node n1 = new Node("div");
         final Node n2 = new Node("span");
         n1.addChild(n2, true);
         assertThat( n1.iterator().next().toString(), is("Relation{target=Node{selector=span, children=[]}, direct?=true}"));
         assertThat( n2.iterator().hasNext(), is(false));
+    }
+
+    @Test public void testPathsEqualsHash() {
+        Path p = new Path().append("div.title", true);
+        Path p2 = new Path().append("div.title", true);
+        Path diff1 = new Path().append("div.xxx", true);
+        Path diff2 = new Path().append("div.xxx", true).append("span", true);
+        EqHash.testEqualsHashcode(p, p2, diff1, diff2);
     }
 
     private void testPaths(Node top, String exp) {

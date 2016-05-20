@@ -2,6 +2,7 @@ package org.hiatusuk.selectorLint.tree;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.base.MoreObjects;
@@ -15,9 +16,10 @@ public class Node implements Iterable<NodeRelation> {
         this.self = self;
     }
 
-    public void addChild( Node node, boolean direct) {
+    public Node addChild( Node node, boolean direct) {
         Preconditions.checkArgument(node != this);
         children.add( new NodeRelation(node, direct) );
+        return this;
     }
 
     public boolean isLeaf() {
@@ -31,6 +33,26 @@ public class Node implements Iterable<NodeRelation> {
     @Override
     public Iterator<NodeRelation> iterator() {
         return children.iterator();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(self, children);
+    }
+
+    @Override
+    public boolean equals( Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Node)) {
+            return false;
+        }
+        final Node other = (Node) obj;
+        return Objects.equals(self, other.self) && Objects.equals(children, other.children);
     }
 
     @Override

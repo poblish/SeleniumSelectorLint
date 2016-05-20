@@ -1,5 +1,7 @@
 package org.hiatusuk.selectorLint.tree;
 
+import java.util.Objects;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.primitives.Ints;
 
@@ -17,12 +19,13 @@ public class Path implements Comparable<Path> {
         this.score = existing.score;
     }
 
-    public void append(final CharSequence selector, boolean isDirect) {
+    public Path append(final CharSequence selector, boolean isDirect) {
         if (currentPath.length() > 0) {
             currentPath.append(isDirect ? " > " : " ");
         }
         currentPath.append(selector);
         score++;
+        return this;
     }
 
     public String getPath() {
@@ -36,6 +39,26 @@ public class Path implements Comparable<Path> {
             return sizeVal;
         }
         return getPath().compareTo( other.getPath() );
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(currentPath.toString(), score);
+    }
+
+    @Override
+    public boolean equals( Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Path)) {
+            return false;
+        }
+        final Path other = (Path) obj;
+        return Objects.equals(score, other.score) && Objects.equals(currentPath.toString(), other.currentPath.toString());
     }
 
     @Override
