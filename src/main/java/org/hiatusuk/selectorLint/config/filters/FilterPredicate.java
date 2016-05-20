@@ -1,4 +1,4 @@
-package org.hiatusuk.selectorLint;
+package org.hiatusuk.selectorLint.config.filters;
 
 import java.util.ArrayList;
 import java.util.List;

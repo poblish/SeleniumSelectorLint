@@ -1,10 +1,11 @@
-package org.hiatusuk.selectorLint;
+package org.hiatusuk.selectorLint.config;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
+import org.hiatusuk.selectorLint.config.filters.FilterPredicate;
 import org.hiatusuk.selectorLint.handlers.*;
 
 import com.esotericsoftware.yamlbeans.YamlConfig;
@@ -99,9 +100,5 @@ public class Options {
 
     public Iterable<ElementHandler> handlers() {
         return generatedHandlers;
-    }
-
-    public static class Rules extends HashMap<String,FilterPredicate> {
-        
     }
 }

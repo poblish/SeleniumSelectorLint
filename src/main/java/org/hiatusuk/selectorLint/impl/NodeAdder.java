@@ -1,4 +1,4 @@
-package org.hiatusuk.selectorLint;
+package org.hiatusuk.selectorLint.impl;
 
 import org.hiatusuk.selectorLint.tree.Node;
 

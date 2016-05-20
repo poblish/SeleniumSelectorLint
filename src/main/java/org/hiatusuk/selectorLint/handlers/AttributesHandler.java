@@ -6,10 +6,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.hiatusuk.selectorLint.ElementContext;
-import org.hiatusuk.selectorLint.FilterPredicate;
-import org.hiatusuk.selectorLint.MatchTester;
-import org.hiatusuk.selectorLint.NodeAdder;
-import org.hiatusuk.selectorLint.Options.Rules;
+import org.hiatusuk.selectorLint.config.Rules;
+import org.hiatusuk.selectorLint.config.filters.FilterPredicate;
+import org.hiatusuk.selectorLint.impl.MatchTester;
+import org.hiatusuk.selectorLint.impl.NodeAdder;
 import org.hiatusuk.selectorLint.tree.Node;
 import org.hiatusuk.selectorLint.tree.NodeVisitor;
 import org.hiatusuk.selectorLint.tree.Path;

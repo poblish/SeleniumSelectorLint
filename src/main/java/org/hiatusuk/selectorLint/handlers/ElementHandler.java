@@ -1,8 +1,8 @@
 package org.hiatusuk.selectorLint.handlers;
 
 import org.hiatusuk.selectorLint.ElementContext;
-import org.hiatusuk.selectorLint.MatchTester;
-import org.hiatusuk.selectorLint.NodeAdder;
+import org.hiatusuk.selectorLint.impl.MatchTester;
+import org.hiatusuk.selectorLint.impl.NodeAdder;
 
 public interface ElementHandler {
 

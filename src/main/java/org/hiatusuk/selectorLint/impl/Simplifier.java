@@ -1,4 +1,4 @@
-package org.hiatusuk.selectorLint;
+package org.hiatusuk.selectorLint.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
+import org.hiatusuk.selectorLint.ElementContext;
+import org.hiatusuk.selectorLint.config.Options;
 import org.hiatusuk.selectorLint.handlers.ElementHandler;
 import org.hiatusuk.selectorLint.tree.Node;
 import org.hiatusuk.selectorLint.utils.Strings;

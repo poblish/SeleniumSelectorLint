@@ -1,4 +1,4 @@
-package org.hiatusuk.selectorLint;
+package org.hiatusuk.selectorLint.config.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
-import org.hiatusuk.selectorLint.Options.Rules;
+import org.hiatusuk.selectorLint.config.Rules;
 
 import com.google.common.base.Predicate;
 

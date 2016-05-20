@@ -2,6 +2,7 @@ package org.hiatusuk.selectorLint;
 
 import java.io.IOException;
 
+import org.hiatusuk.selectorLint.config.Options;
 import org.testng.annotations.Test;
 
 public class ConfigTest {

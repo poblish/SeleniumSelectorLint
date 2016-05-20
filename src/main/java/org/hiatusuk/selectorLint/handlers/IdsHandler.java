@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.hiatusuk.selectorLint.*;
+import org.hiatusuk.selectorLint.config.Options;
+import org.hiatusuk.selectorLint.config.filters.RulesBasedFilter;
+import org.hiatusuk.selectorLint.impl.MatchTester;
+import org.hiatusuk.selectorLint.impl.NodeAdder;
 import org.hiatusuk.selectorLint.tree.Node;
 import org.hiatusuk.selectorLint.tree.NodeVisitor;
 import org.hiatusuk.selectorLint.tree.Path;

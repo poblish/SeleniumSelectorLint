@@ -1,5 +1,7 @@
 package org.hiatusuk.selectorLint;
 
+import org.hiatusuk.selectorLint.config.Options;
+import org.hiatusuk.selectorLint.impl.Simplifier;
 import org.hiatusuk.selectorLint.webdriver.LintedWebDriver;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
