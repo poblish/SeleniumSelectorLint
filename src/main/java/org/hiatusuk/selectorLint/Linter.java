@@ -21,8 +21,8 @@ public class Linter {
         return this;
     }
 
-    public Linter logSuggestions(final boolean logSuggestions) {
-        wrapper.logSuggestions(logSuggestions);
+    public Linter logSuggestions(final Logger logger) {
+        wrapper.logSuggestions(logger);
         return this;
     }
 

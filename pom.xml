@@ -26,6 +26,11 @@
             <artifactId>yamlbeans</artifactId>
             <version>1.09</version>
         </dependency>
+        <dependency>
+        	<groupId>org.slf4j</groupId>
+        	<artifactId>slf4j-api</artifactId>
+        	<version>1.7.21</version>
+        </dependency>
 
         <dependency>
             <groupId>org.hamcrest</groupId>
