@@ -48,4 +48,9 @@ public class FilterPredicate implements Predicate<String> {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).add("filter", ignored).toString();
+    }
 }
