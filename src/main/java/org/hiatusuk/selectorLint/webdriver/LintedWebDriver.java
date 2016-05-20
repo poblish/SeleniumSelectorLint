@@ -1,4 +1,4 @@
-package org.hiatusuk.selectorLint;
+package org.hiatusuk.selectorLint.webdriver;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -6,21 +6,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.hiatusuk.selectorLint.Simplifier;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.*;
 import org.openqa.selenium.internal.WrapsDriver;
+import org.slf4j.Logger;
 
-public class WebDriverWrapper implements WebDriver, WrapsDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen {
+public class LintedWebDriver implements WebDriver, WrapsDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen {
 
     private WebDriver original;
-    private boolean logSuggestions = true;
+    private Logger suggestionsLogger = null;
 
     private final Simplifier simplifier;
 
-    public WebDriverWrapper(WebDriver originalDriver, final Simplifier simplifier) {
+    public LintedWebDriver(WebDriver originalDriver, final Simplifier simplifier) {
         this.original = checkNotNull(originalDriver);
         this.simplifier = checkNotNull(simplifier);
     }
@@ -29,48 +31,48 @@ public class WebDriverWrapper implements WebDriver, WrapsDriver, JavascriptExecu
         return simplifier.getImprovedSelector( originalMatches, originalSelectorString);
     }
 
-    public void logSuggestions(final boolean logSuggestions) {
-        this.logSuggestions = logSuggestions;
+    public void logSuggestions(final Logger logger) {
+        this.suggestionsLogger = logger;
     }
 
     @Override
     public WebElement findElement( final By by) {
-        long startNs = System.nanoTime();
+//        long startNs = System.nanoTime();
         final WebElement original = getWrappedDriver().findElement(by);
-        double diffMs = (System.nanoTime() - startNs) / 1E6;
+//        double diffMs = (System.nanoTime() - startNs) / 1E6;
 
         final List<By> newBys = getImprovedSelector(Collections.singletonList(original), by.toString());
 
-        if (logSuggestions) {
+        if (suggestionsLogger != null) {
             if (newBys.isEmpty()) {
-                System.out.println("> NO Suggestions for [" + by + "]");
+                suggestionsLogger.debug("> No Suggestions for [" + by + "]");
             }
             else {
-                System.out.println("> Suggestions for [" + by + "]" + /* " (" + (int)( diffMs * 1000)/1000.0 + " msecs)" + */ "... " + newBys);
+                suggestionsLogger.debug("> Suggestions for [" + by + "] ... " + newBys);
             }
         }
 
-        return original;
+        return new LintedWebElement(original, newBys);
     }
 
     @Override
     public List<WebElement> findElements( final By by) {
-        long startNs = System.nanoTime();
+//        long startNs = System.nanoTime();
         final List<WebElement> originals = getWrappedDriver().findElements(by);
-        double diffMs = (System.nanoTime() - startNs) / 1E6;
+//        double diffMs = (System.nanoTime() - startNs) / 1E6;
 
         final List<By> newBys = getImprovedSelector(originals, by.toString());
 
-        if (logSuggestions) {
+        if (suggestionsLogger != null) {
             if (newBys.isEmpty()) {
-                System.out.println("> NO Suggestions for [" + by + "]");
+                suggestionsLogger.debug("> NO Suggestions for [" + by + "]");
             }
             else {
-                System.out.println("> Suggestions for [" + by + "]" + /* " (" + (int)( diffMs * 1000)/1000.0 + " msecs)" + */ "... " + newBys);
+                suggestionsLogger.debug("> Suggestions for [" + by + "] ... " + newBys);
             }
         }
 
-        return originals;
+        return new LintedWebElements(originals, newBys);
     }
 
     @Override

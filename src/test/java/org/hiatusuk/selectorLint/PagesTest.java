@@ -4,14 +4,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.hiatusuk.selectorLint.webdriver.LintedWebDriver;
+import org.hiatusuk.selectorLint.webdriver.LintedWebElement;
+import org.hiatusuk.selectorLint.webdriver.LintedWebElements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver.Navigation;
 import org.openqa.selenium.WebDriver.TargetLocator;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.interactions.Keyboard;
 import org.openqa.selenium.interactions.Mouse;
@@ -23,7 +24,7 @@ import com.google.common.collect.Lists;
 public class PagesTest {
 
     // WebDriverWrapper driver = Linter.wrap(new FirefoxDriver());
-    WebDriverWrapper driver = Linter.wrap( new HtmlUnitDriver(true) ).config( Options.read("options.yaml") ).build();
+    LintedWebDriver driver = Linter.wrap( new HtmlUnitDriver(true) ).config( Options.read("options.yaml") ).build();
 
     @Test
     public void testChallengingDOM() {
@@ -187,27 +188,17 @@ public class PagesTest {
         driver.quit();
     }
 
-    private void testNoChange( final WebDriverWrapper wd, final By by) {
-        final WebElement original = wd.findElement(by);
-
-        final List<By> newBys = wd.getImprovedSelector(Collections.singletonList(original), by.toString());
-        // final List<By> o = Lists.newArrayList(by);
-
-        // assertThat( newBys.toArray( new By[0] ), is( new By[]{by}) );
-        assertThat(newBys, empty());
+    private void testNoChange( final LintedWebDriver wd, final By by) {
+        assertThat( ((LintedWebElement) wd.findElement(by)).getSuggestedSelectors(), empty());
     }
 
-    private void testElement( final WebDriverWrapper wd, final By by, By... expectedBys) {
-        final WebElement original = wd.findElement(by);
+    private void testElement( final LintedWebDriver wd, final By by, By... expectedBys) {
         final List<By> expectations = Lists.newArrayList(expectedBys);
-
-        assertThat( wd.getImprovedSelector(Collections.singletonList(original), by.toString()), is(expectations));
+        assertThat( ((LintedWebElement) wd.findElement(by)).getSuggestedSelectors(), is(expectations));
     }
 
-    private void testElements( final WebDriverWrapper wd, final By by, By... expectedBys) {
-        final List<WebElement> originalMatches = wd.findElements(by);
+    private void testElements( final LintedWebDriver wd, final By by, By... expectedBys) {
         final List<By> expectations = Lists.newArrayList(expectedBys);
-
-        assertThat( wd.getImprovedSelector(originalMatches, by.toString()), is(expectations));
+        assertThat( ((LintedWebElements) wd.findElements(by)).getSuggestedSelectors(), is(expectations));
     }
 }

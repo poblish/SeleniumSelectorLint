@@ -1,15 +1,17 @@
 package org.hiatusuk.selectorLint;
 
+import org.hiatusuk.selectorLint.webdriver.LintedWebDriver;
 import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
 
 public class Linter {
 
-    private final WebDriverWrapper wrapper;
+    private final LintedWebDriver wrapper;
     private final Simplifier simplifier;
 
     private Linter(final WebDriver driver) {
         simplifier = new Simplifier(driver);
-        wrapper = new WebDriverWrapper(driver, simplifier);
+        wrapper = new LintedWebDriver(driver, simplifier);
     }
 
     public static Linter wrap(final WebDriver driver) {
@@ -31,7 +33,7 @@ public class Linter {
         return this;
     }
 
-    public WebDriverWrapper build() {
+    public LintedWebDriver build() {
         return wrapper;
     }
 }
