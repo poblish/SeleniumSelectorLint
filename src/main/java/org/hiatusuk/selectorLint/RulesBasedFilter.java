@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.regex.Pattern;
 
 import org.hiatusuk.selectorLint.Options.Rules;
-import org.testng.internal.Nullable;
 
 import com.google.common.base.Predicate;
 
@@ -21,7 +20,7 @@ public class RulesBasedFilter implements Predicate<String>, Serializable {
     }
 
     @Override
-    public boolean apply(@Nullable String arg) {
+    public boolean apply(final String arg) {
 //        if (target.isEmpty()) {
 //            return true;
 //        }
