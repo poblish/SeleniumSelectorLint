@@ -1,70 +1,76 @@
 package org.hiatusuk.selectorLint.handlers;
 
-import static com.google.common.base.Predicates.in;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.hiatusuk.selectorLint.ElementContext;
+import org.hiatusuk.selectorLint.FilterPredicate;
 import org.hiatusuk.selectorLint.MatchTester;
 import org.hiatusuk.selectorLint.NodeAdder;
-import org.hiatusuk.selectorLint.Semantic;
+import org.hiatusuk.selectorLint.Options.Rules;
 import org.hiatusuk.selectorLint.tree.Node;
 import org.hiatusuk.selectorLint.tree.NodeVisitor;
 import org.hiatusuk.selectorLint.tree.Path;
 import org.openqa.selenium.By;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Maps;
+import com.google.common.base.Predicates;
 
 public class AttributesHandler extends AbstractBaseHandler {
 
     private final Predicate<String> ignoreKeys;
-    private final Predicate<String> keysNeedSemanticValue;
+    private final Map<String,List<String>> keysNeedSemanticValue;
+    private final Rules rules;
 
-    private final Predicate<Entry<String,String>> acceptRule = new Predicate<Entry<String,String>>() {
-
-        @Override
-        public boolean apply(final Entry<String,String> inEntry) {
-            if (ignoreKeys.apply(inEntry.getKey())) {
-                return false;
-            }
-
-            if (keysNeedSemanticValue.apply(inEntry.getKey()) && Semantic.isNonSemantic( inEntry.getValue() )) {
-                return false;
-            }
-
-            return true;
-        }};
-
-    public AttributesHandler(final List<String> ignoreAttributes, final List<String> keysNeedSemanticValue) {
-        this.ignoreKeys = in(ignoreAttributes);
-        this.keysNeedSemanticValue = in(keysNeedSemanticValue);
-    }
-
-    private Map<String,String> filterQuality(final Map<String,String> attrs) {
-        return Maps.filterEntries(attrs, acceptRule);
+    public AttributesHandler(final Rules rules, final List<String> ignoreAttributes, final Map<String,List<String>> keysNeedSemanticValue) {
+        this.ignoreKeys = Predicates.in(ignoreAttributes); // new RulesBasedFilter(rules, ignoreAttributes);
+        this.keysNeedSemanticValue = keysNeedSemanticValue;
+        this.rules = rules;
     }
 
     public boolean getImprovedSelectors(final ElementContext ctxt, final NodeAdder nodes, final MatchTester tester) {
 
-        for (Entry<String, String> eachGoodAttr : filterQuality( ctxt.attributes() ).entrySet()) {
-            if (ctxt.currentTagName().equals("input") && eachGoodAttr.getKey().equals("value") && Semantic.isNonSemantic( eachGoodAttr.getValue() )) {
-                continue;  // non-semantic
+        for (Entry<String, String> eachAttr : ctxt.attributes().entrySet()) {
+            if (ignoreKeys.apply(eachAttr.getKey())) {
+                continue;
+            }
+
+            // System.out.println(">>> TRY: " + ctxt.currentTagName() + "." + eachAttr.getKey());
+
+            boolean filtered = false;
+            for (Entry<String,List<String>> eachSV : keysNeedSemanticValue.entrySet()) {
+
+                FilterPredicate fp = rules.get( eachSV.getKey().substring(1) );
+
+                // Is our attribute registered as one we should check? *Then* we can validate its value
+                if (eachSV.getValue().contains( ctxt.currentTagName() + "." + eachAttr.getKey() ) ||
+                    eachSV.getValue().contains( eachAttr.getKey() )) {
+                    // System.out.println(">>> FOUND for " + eachSV.getKey());
+
+                    if (!fp.apply( eachAttr.getValue() )) {
+                        // System.out.println(">>> SKIPPING " + ctxt.currentTagName() + "." + eachAttr.getKey() + ", contained in " + eachSV.getValue());
+                        filtered = true;
+                        break;
+                    }
+                }
+            }
+
+            if (filtered) {
+                continue;
             }
 
             ctxt.setHasSomeProps();
 
             if (ctxt.isLeaf()) {
                 // By trying = By.xpath(".//*[@" + eachGoodAttr.getKey() + "='" + eachGoodAttr.getValue() + "']");
-                if (tester.ok( By.cssSelector( ctxt.currentTagName() + "[" + eachGoodAttr.getKey() + "='" + eachGoodAttr.getValue() + "']") )) {
+                if (tester.ok( By.cssSelector( ctxt.currentTagName() + "[" + eachAttr.getKey() + "='" + eachAttr.getValue() + "']") )) {
                     continue;
                 }
             }
 
-            final Node newNode = nodes.add( ctxt.currentTagName() + "[" + eachGoodAttr.getKey() + "='" + eachGoodAttr.getValue() + "']", true);
+            final Node newNode = nodes.add( ctxt.currentTagName() + "[" + eachAttr.getKey() + "='" + eachAttr.getValue() + "']", true);
 
             final Set<Path> paths = new NodeVisitor().visit(newNode);
             // System.out.println("::: ATTR: " + paths.size() + " paths: " + paths);
