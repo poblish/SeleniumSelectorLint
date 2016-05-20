@@ -112,6 +112,7 @@ public class Simplifier {
             }
 
             private boolean isUnique(final By selector, final List<WebElement> originals) {
+                System.out.println("... " + selector);
                 List<WebElement> tried = driver.findElements(selector);
                 return tried.equals(originals);
             }

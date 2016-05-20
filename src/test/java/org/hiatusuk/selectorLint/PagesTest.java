@@ -91,6 +91,16 @@ public class PagesTest {
     }
 
     @Test
+    public void testCrunch() {
+        driver.get(new File("src/test/resources/crunch.html").toURI().toString());
+        testElement(driver, By.xpath("//*[@id=\"content\"]/div[2]/div/div[2]/div[2]/h2/a"),
+                  /* ==> */ By.cssSelector("div.row > div:nth-child(2) > div:nth-child(2) > h2 a"));
+
+//        testElement(driver, By.cssSelector("#content > div:nth-child(11) > div > div.testimonial.image-tile.tile.third-tile > section > p:nth-child(2)"),
+//                        /* ==> */ By.cssSelector("input[value='<input type=submit>']"));
+    }
+
+    @Test
     public void testGmailPage() {
         driver.get(new File("src/test/resources/gmail.html").toURI().toString());
         testElement(driver, By.xpath("//*[@id=\":kj\"]/span"),

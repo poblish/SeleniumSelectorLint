@@ -6,8 +6,8 @@ rules:
       - 0
       - 1
       - /^(id-|:|\\3A )/
-      - uuids
-      - afn
+      - ^uuids
+      - afn  # FIXME Hardcoded
 handlerOrdering:
   Tags:
     important:
@@ -21,18 +21,20 @@ handlerOrdering:
       - tbody
   Id:
     ignore:
-      - generatedOrNonSemantic
+      - ^generatedOrNonSemantic
   Classes:
     minAcceptableClassLength: 3
     ignore:
-      - generatedOrNonSemantic
+      - ^generatedOrNonSemantic
       - clear-fix
       - bold
       - blue
-      - large-2
+      - large
+      - /large-/
+      - col
+      - /col-/
   Attributes:
-    ignore:  # class and id automatically ignored
-      - generatedOrNonSemantic
+    filterNames:  # class and id automatically ignored
       - cellpadding
       - cellspacing
       - disabled
@@ -41,5 +43,9 @@ handlerOrdering:
       - onclick
       - style
       - tabindex
-    checkValue:
+    filterValues:
       - aria-labelledby
+      - input.value
+  # Input Values:
+  #   ignore:  # class and id automatically ignored
+  #     - ^generatedOrNonSemantic

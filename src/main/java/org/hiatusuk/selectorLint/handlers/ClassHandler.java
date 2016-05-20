@@ -1,13 +1,15 @@
 package org.hiatusuk.selectorLint.handlers;
 
-import static com.google.common.base.Predicates.in;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.hiatusuk.selectorLint.*;
+import org.hiatusuk.selectorLint.ElementContext;
+import org.hiatusuk.selectorLint.MatchTester;
+import org.hiatusuk.selectorLint.NodeAdder;
+import org.hiatusuk.selectorLint.Options.Rules;
+import org.hiatusuk.selectorLint.RulesBasedFilter;
 import org.hiatusuk.selectorLint.tree.Node;
 import org.hiatusuk.selectorLint.tree.NodeVisitor;
 import org.hiatusuk.selectorLint.tree.Path;
@@ -22,8 +24,8 @@ public class ClassHandler extends AbstractBaseHandler {
     private final Predicate<String> ignoreClassNames;
     private final int minAcceptableClassLength;
 
-    public ClassHandler(final List<String> ignoreClassNames, final int minAcceptableClassLength) {
-        this.ignoreClassNames = in(ignoreClassNames);
+    public ClassHandler(final Rules rules, final List<String> ignoreClassNames, final int minAcceptableClassLength) {
+        this.ignoreClassNames = new RulesBasedFilter(rules, ignoreClassNames);
         this.minAcceptableClassLength = minAcceptableClassLength;
     }
 
@@ -61,7 +63,7 @@ public class ClassHandler extends AbstractBaseHandler {
 
         @Override
         public boolean apply(final String inClass) {
-            if (ignoreClassNames.apply(inClass) || inClass.length() < minAcceptableClassLength || Semantic.isNonSemantic(inClass)) {
+            if (!ignoreClassNames.apply(inClass) || inClass.length() < minAcceptableClassLength) {
                 return false;
             }
 

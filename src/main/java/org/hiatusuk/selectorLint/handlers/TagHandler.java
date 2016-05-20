@@ -6,6 +6,8 @@ import java.util.Set;
 import org.hiatusuk.selectorLint.ElementContext;
 import org.hiatusuk.selectorLint.MatchTester;
 import org.hiatusuk.selectorLint.NodeAdder;
+import org.hiatusuk.selectorLint.Options.Rules;
+import org.hiatusuk.selectorLint.RulesBasedFilter;
 import org.hiatusuk.selectorLint.tree.Node;
 import org.hiatusuk.selectorLint.tree.NodeVisitor;
 import org.hiatusuk.selectorLint.tree.Path;
@@ -13,24 +15,24 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 
 public class TagHandler extends AbstractBaseHandler {
 
     private final Predicate<String> semanticTags;
     private final Predicate<String> ignoreTags;
 
-    public TagHandler(final List<String> semanticTags, final List<String> ignoreTags) {
-        this.semanticTags = Predicates.in(semanticTags);
-        this.ignoreTags = Predicates.in(ignoreTags);
+    public TagHandler(final Rules rules, final List<String> semanticTags, final List<String> ignoreTags) {
+        this.semanticTags = new RulesBasedFilter(rules, semanticTags);
+        this.ignoreTags = new RulesBasedFilter(rules, ignoreTags);
     }
 
-    private boolean isGoodQuality( WebElement elem) {
+    private boolean isMediocreQuality( WebElement elem) {
         return semanticTags.apply( elem.getTagName().toLowerCase() );
     }
 
     public boolean getImprovedSelectors(final ElementContext ctxt, final NodeAdder nodes, final MatchTester tester) {
-        if (!isGoodQuality( ctxt.element() )) {
+//        System.out.println("-- TAG Mediocre? " + isMediocreQuality( ctxt.element() ) + " for " + ctxt.element());
+        if (isMediocreQuality( ctxt.element() )) {
             return false;
         }
 
@@ -65,6 +67,6 @@ public class TagHandler extends AbstractBaseHandler {
 
     @Override
     public boolean shouldSkip(final String tagName) {
-        return ignoreTags.apply(tagName);
+        return !ignoreTags.apply(tagName);
     }
 }
