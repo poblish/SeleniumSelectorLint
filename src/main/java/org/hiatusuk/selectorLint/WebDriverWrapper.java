@@ -80,6 +80,7 @@ public class WebDriverWrapper implements WebDriver, WrapsDriver, JavascriptExecu
 
     @Override
     public void get( String url) {
+        simplifier.clearCache();
         getWrappedDriver().get(url);
     }
 

@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 import org.hiatusuk.selectorLint.handlers.ElementHandler;
 import org.hiatusuk.selectorLint.tree.Node;
@@ -17,6 +19,9 @@ import org.openqa.selenium.WebElement;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Throwables;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 public class Simplifier {
 
@@ -40,6 +45,9 @@ public class Simplifier {
     private Map<String,String> elementAttrs;
     private boolean isLeaf;
     private Node lastPivotNode;
+
+    private final Cache<By,Boolean> selectorCacheByPage = CacheBuilder.newBuilder().build();
+
 
     public Simplifier(final WebDriver inDriver) {
         driver = checkNotNull(inDriver);
@@ -112,9 +120,19 @@ public class Simplifier {
             }
 
             private boolean isUnique(final By selector, final List<WebElement> originals) {
-                System.out.println("... " + selector);
-                List<WebElement> tried = driver.findElements(selector);
-                return tried.equals(originals);
+                try {
+                    return selectorCacheByPage.get(selector, new Callable<Boolean>() {
+
+                        @Override
+                        public Boolean call() throws Exception {
+                            System.out.println("... " + selector);
+                            return driver.findElements(selector).equals(originals);
+                        }
+                    } );
+                }
+                catch (ExecutionException e) {
+                    throw Throwables.propagate(e);
+                }
             }
         };
 
@@ -231,5 +249,9 @@ public class Simplifier {
         final JavascriptExecutor js = (JavascriptExecutor) driver;
         // *Much* much more efficient than keep calling element.attribute()
         return (Map<String, String>) js.executeScript("var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;", elem);
+    }
+
+    public void clearCache() {
+        selectorCacheByPage.invalidateAll();
     }
 }
