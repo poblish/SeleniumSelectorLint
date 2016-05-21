@@ -30,6 +30,10 @@ public class ClassHandler extends AbstractBaseHandler {
     }
 
     public boolean getImprovedSelectors(final ElementContext ctxt, final NodeAdder nodes, final MatchTester tester) {
+        if (ctxt.currentTagName().equals("body") || ctxt.currentTagName().equals("main") || ctxt.currentTagName().equals("html") || ctxt.currentTagName().equals("head")) {
+            return false;
+        }
+
         boolean gotGoodClass = false;
 
         // Need to filter, or at least *score* these!
