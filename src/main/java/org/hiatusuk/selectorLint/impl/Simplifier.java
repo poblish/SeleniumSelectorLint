@@ -199,14 +199,15 @@ public class Simplifier {
 
             if (!skippedUselessElement) {
                 if (!addedGoodNonUniqueNode) {
-                    List<WebElement> precedingSibs = currentElement.findElements(By.xpath("preceding-sibling::" + tagName));
-                    List<WebElement> followingSibs = currentElement.findElements(By.xpath("following-sibling::" + tagName));
-    
-                    if (precedingSibs.isEmpty() && followingSibs.isEmpty()) {
+                    // See if we're the only instance of our Tag under this parent, i.e. we don't need nth-child at all
+                    if (currentElement.findElements(By.xpath("preceding-sibling::" + tagName)).isEmpty() &&
+                        currentElement.findElements(By.xpath("following-sibling::" + tagName)).isEmpty()) {
                         addNode( tagName, isLeaf || hasSomeProps);
                     }
                     else {
-                        addNode( tagName + ":nth-child(" + (precedingSibs.size() + 1) + ")", true);
+                        // We're not on our own, so we need to know our *actual* position among all the children
+                        final List<WebElement> precedingSibsOfAll = currentElement.findElements(By.xpath("preceding-sibling::*"));
+                        addNode( tagName + ":nth-child(" + (precedingSibsOfAll.size() + 1) + ")", true);
                     }
                 }
 
