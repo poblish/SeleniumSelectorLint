@@ -82,11 +82,11 @@ public class AttributesHandler extends AbstractBaseHandler {
 
             for (Path each : paths) {
                 if (tester.ok( By.cssSelector( each.getPath() ) )) {
-                    return true;
+                    gotResult = true;
                 }
             }
         }
 
-        return false;
+        return gotResult;
     }
 }

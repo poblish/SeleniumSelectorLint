@@ -75,6 +75,9 @@ public class PagesTest {
                   /* ==> */ By.cssSelector("input[value='address']"));
         testNoChange(driver, By.cssSelector("#myForm > input:nth-child(3)"));
 
+//        testElement(driver, By.cssSelector("#myForm > input:nth-child(3)"),
+//                  /* ==> */ By.cssSelector("body input:nth-child(3)"));
+
         testNoChange(driver, By.cssSelector("body > article:nth-child(2)"));
         testNoChange(driver, By.cssSelector("body > article:nth-child(3)"));
 
@@ -82,7 +85,9 @@ public class PagesTest {
         testElement(driver, By.name("myName is John?"),
                   /* ==> */ By.cssSelector("p[name='myName is John?']"));
 
-        testNoChange(driver, By.cssSelector("footer"));
+        // Only a suggested improvement, this, i.e. up to you
+        testElement(driver, By.cssSelector("footer"),
+                  /* ==> */ By.id("foo"));
 
         testElement(driver, By.cssSelector("span"),
                   /* ==> */ By.id("bar"));
@@ -98,8 +103,11 @@ public class PagesTest {
         testElement(driver, By.xpath("//*[@id=\"content\"]/div[2]/div/div[2]/div[2]/h2/a"),
                   /* ==> */ By.cssSelector("div.row > div:nth-child(2) > div:nth-child(2) > h2 a"));
 
-//        testElement(driver, By.cssSelector("#content > div:nth-child(11) > div > div.testimonial.image-tile.tile.third-tile > section > p:nth-child(2)"),
-//                        /* ==> */ By.cssSelector("input[value='<input type=submit>']"));
+        testElement(driver, By.cssSelector("#content > div:nth-child(11) > div > div.testimonial.image-tile.tile.third-tile > section > p:nth-child(2)"),
+                  /* ==> */ By.cssSelector("div.third\\-tile p:nth-child(2)"));
+
+        testElement(driver, By.cssSelector("#content > section:nth-child(13) > div > div > div.reach-out-bar__right > a"),
+                  /* ==> */ By.cssSelector("a[title='Free demo of Crunch']"));
     }
 
     @Test

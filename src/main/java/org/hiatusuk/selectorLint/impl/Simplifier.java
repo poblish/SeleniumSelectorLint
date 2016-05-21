@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutionException;
 import org.hiatusuk.selectorLint.ElementContext;
 import org.hiatusuk.selectorLint.config.Options;
 import org.hiatusuk.selectorLint.handlers.ElementHandler;
+import org.hiatusuk.selectorLint.handlers.IdsHandler;
 import org.hiatusuk.selectorLint.tree.Node;
 import org.hiatusuk.selectorLint.utils.Strings;
 import org.openqa.selenium.By;
@@ -167,7 +168,9 @@ public class Simplifier {
 
             for (ElementHandler eachHandler : options.handlers()) {
                 if (eachHandler.getImprovedSelectors(ctxt, nodes, tester)) {
-                    return results;
+                    if (/* FIXME Pretty vile assumption */ eachHandler instanceof IdsHandler) {
+                        return results;
+                    }
                 }
             }
     

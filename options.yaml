@@ -40,6 +40,7 @@ handlerOrdering:
     filterNames:  # class and id automatically ignored
       - cellpadding
       - cellspacing
+      - data-ga-load
       - disabled
       - gh
       - lang
