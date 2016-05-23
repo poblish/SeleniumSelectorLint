@@ -3,7 +3,6 @@ package org.hiatusuk.selectorLint.impl;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -14,21 +13,16 @@ import org.hiatusuk.selectorLint.config.Options;
 import org.hiatusuk.selectorLint.handlers.ElementHandler;
 import org.hiatusuk.selectorLint.handlers.IdsHandler;
 import org.hiatusuk.selectorLint.tree.Node;
-import org.hiatusuk.selectorLint.utils.Strings;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.base.Throwables;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 public class Simplifier {
-
-    private static final Predicate<String> CAN_USE_TEXT_TAGS = Predicates.in(Arrays.asList("option","td","th","var"));
 
     private Options options;
     private boolean convertCss = false;
@@ -173,16 +167,7 @@ public class Simplifier {
                     }
                 }
             }
-    
-            // Try XPath text() matches
-            if (results.isEmpty() && Strings.hasString( currentElement.getText() )) { // Try text
-                if (CAN_USE_TEXT_TAGS.apply( tagName )) {  // Anything else?!?
-                    hasSomeProps = true;
 
-                    tester.ok( By.xpath("//" + tagName + "[text()='" + currentElement.getText() + "']") );
-                }
-            }
-    
             if (!results.isEmpty()) {  // Is this premature?!?
                 return results;
             }
@@ -237,7 +222,7 @@ public class Simplifier {
         for (Node eachChild : childLevelSelectors) {
             n.addChild(eachChild, direct);
         }
-        
+
         if (lastPivotNode == null) {
             lastPivotNode = n;
             lastPivotSetForThisLevel = true;

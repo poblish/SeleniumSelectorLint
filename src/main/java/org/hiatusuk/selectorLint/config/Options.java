@@ -16,9 +16,6 @@ public class Options {
     @SuppressWarnings("unused")
     private String name;
 
-    @SuppressWarnings("unused")
-    private boolean allowTextComparisons;
-
     private Map<String,Object> rules;
     private LinkedHashMap<String,Map<String,Object>> handlerOrdering;
 
@@ -74,6 +71,13 @@ public class Options {
                     ignoreAttrs.add("class");
                     Map<String,List<String>> checkValues = (Map<String,List<String>>) handlerInfo.getValue().get("filterValues");
                     handler = new AttributesHandler( namedFilters, ignoreAttrs, checkValues);
+                    break;
+                case "Text Values":
+                    Object onlyTagsObj = handlerInfo.getValue().get("onyTags");
+                    Object ignoreTVTagsObj = handlerInfo.getValue().get("ignoreTags");
+                    List<String> onlyTags = onlyTagsObj instanceof List ? (List<String>) onlyTagsObj : Collections.<String>emptyList();
+                    List<String> ignoreTVTags = ignoreTVTagsObj instanceof List ? (List<String>) ignoreTVTagsObj : Collections.<String>emptyList();
+                    handler = new TextValuesHandler( namedFilters, onlyTags, ignoreTVTags);
                     break;
                 default:
                     throw new UnsupportedOperationException();

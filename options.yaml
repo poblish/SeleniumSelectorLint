@@ -1,5 +1,4 @@
 name: default
-allowTextComparisons: true
 rules:
   generatedOrNonSemantic:
     ignore:
@@ -51,3 +50,13 @@ handlerOrdering:
       ^generatedOrNonSemantic:
         - aria-labelledby
         - input.value
+  Text Values:
+    onyTags:
+      - option
+      - td
+      - th
+      - var
+      # Probably *should* allow - a
+    ignoreTags:
+      - div
+      - span

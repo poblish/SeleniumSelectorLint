@@ -19,6 +19,10 @@ public class RulesBasedFilter implements Predicate<String>, Serializable {
         this.target = checkNotNull(target);
     }
 
+    public boolean isEmpty() {
+        return target.isEmpty();
+    }
+
     @Override
     public boolean apply(final String arg) {
 //        if (target.isEmpty()) {
