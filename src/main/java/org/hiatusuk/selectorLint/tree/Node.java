@@ -9,8 +9,8 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
 public class Node implements Iterable<NodeRelation> {
-    private Set<NodeRelation> children = new HashSet<>();
-    private String self;
+    private final Set<NodeRelation> children = new HashSet<>();
+    private final String self;
 
     public Node(String self) {
         this.self = self;

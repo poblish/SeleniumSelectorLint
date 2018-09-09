@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
 public class PagesTest {
 
     // WebDriverWrapper driver = Linter.wrap(new FirefoxDriver());
-    LintedWebDriver driver = Linter.wrap( new HtmlUnitDriver(true) ).config( Options.read("options.yaml") ).build();
+    final LintedWebDriver driver = Linter.wrap( new HtmlUnitDriver(true) ).config( Options.read("options.yaml") ).build();
 
     @Test
     public void testChallengingDOM() {

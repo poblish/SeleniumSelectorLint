@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 
 public class LintedWebDriver implements WebDriver, WrapsDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen {
 
-    private WebDriver original;
+    private final WebDriver original;
     private Logger suggestionsLogger = null;
 
     private final Simplifier simplifier;

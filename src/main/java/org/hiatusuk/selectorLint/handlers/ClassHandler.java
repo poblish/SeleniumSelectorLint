@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.hiatusuk.selectorLint.ElementContext;
 import org.hiatusuk.selectorLint.config.Rules;
@@ -15,9 +17,6 @@ import org.hiatusuk.selectorLint.tree.NodeVisitor;
 import org.hiatusuk.selectorLint.tree.Path;
 import org.hiatusuk.selectorLint.utils.CssUtils;
 import org.openqa.selenium.By;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 public class ClassHandler extends AbstractBaseHandler {
 
@@ -66,12 +65,8 @@ public class ClassHandler extends AbstractBaseHandler {
     private final Predicate<String> acceptRule = new Predicate<String>() {
 
         @Override
-        public boolean apply(final String inClass) {
-            if (!ignoreClassNames.apply(inClass) || inClass.length() < minAcceptableClassLength) {
-                return false;
-            }
-
-            return true;
+        public boolean test(final String inClass) {
+            return ignoreClassNames.test(inClass) && inClass.length() >= minAcceptableClassLength;
         }};
 
     private Iterable<String> filter(final String classStr) {
@@ -80,6 +75,6 @@ public class ClassHandler extends AbstractBaseHandler {
         }
 
         // FIXME Either filter by quality or *score*
-        return Iterables.filter( Arrays.asList( classStr.split(" ") ), acceptRule);
+        return Arrays.stream( classStr.split(" ") ).filter(acceptRule).collect(Collectors.toList());
     }
 }

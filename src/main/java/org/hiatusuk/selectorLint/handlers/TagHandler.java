@@ -2,6 +2,7 @@ package org.hiatusuk.selectorLint.handlers;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.hiatusuk.selectorLint.ElementContext;
 import org.hiatusuk.selectorLint.config.Rules;
@@ -14,8 +15,6 @@ import org.hiatusuk.selectorLint.tree.Path;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import com.google.common.base.Predicate;
-
 public class TagHandler extends AbstractBaseHandler {
 
     private final Predicate<String> semanticTags;
@@ -27,7 +26,7 @@ public class TagHandler extends AbstractBaseHandler {
     }
 
     private boolean isMediocreQuality( WebElement elem) {
-        return semanticTags.apply( elem.getTagName().toLowerCase() );
+        return semanticTags.test( elem.getTagName().toLowerCase() );
     }
 
     public boolean getImprovedSelectors(final ElementContext ctxt, final NodeAdder nodes, final MatchTester tester) {
@@ -67,6 +66,6 @@ public class TagHandler extends AbstractBaseHandler {
 
     @Override
     public boolean shouldSkip(final String tagName) {
-        return !ignoreTags.apply(tagName);
+        return !ignoreTags.test(tagName);
     }
 }

@@ -39,12 +39,11 @@ public final class EqHash {
         assertThat( "Source.hashCode() should equal itself", inObj.hashCode(), equalTo( inObj.hashCode() ));
         assertThat( "Source.hashCode() should equal the Copy.hashCode()", inObj.hashCode(), equalTo( inCopy.hashCode() ));
 
-        final Set<Object> diffObjects = new HashSet<Object>();
-        diffObjects.addAll( Arrays.asList(inDifferentObjects) );
+        final Set<Object> diffObjects = new HashSet<>( Arrays.asList(inDifferentObjects) );
         assertThat( "Duplicate Different objects are present: counts differ", inDifferentObjects.length, is(diffObjects.size()));
 
         for ( Object eachDiffObject : inDifferentObjects) {
-            assertThat((Class) inObj.getClass(), equalTo((Class) eachDiffObject.getClass() ));
+            assertThat(inObj.getClass(), equalTo(eachDiffObject.getClass()));
             assertThat( "Different object should not == source", eachDiffObject, not( sameInstance(inObj) ));
             assertThat( "Different object should not equal the Source/Copy object", inObj, not( equalTo(eachDiffObject) ));
             assertThat( "Source.hashCode() should (probably) not equal the Different.hashCode()", inObj.hashCode(), not( equalTo( eachDiffObject.hashCode() ))); // (AGR) ;-)

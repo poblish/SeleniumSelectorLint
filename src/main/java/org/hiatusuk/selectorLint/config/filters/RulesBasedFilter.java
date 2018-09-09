@@ -4,11 +4,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import org.hiatusuk.selectorLint.config.Rules;
-
-import com.google.common.base.Predicate;
 
 public class RulesBasedFilter implements Predicate<String>, Serializable {
     private final Rules rules;
@@ -24,7 +23,7 @@ public class RulesBasedFilter implements Predicate<String>, Serializable {
     }
 
     @Override
-    public boolean apply(final String arg) {
+    public boolean test(final String arg) {
 //        if (target.isEmpty()) {
 //            return true;
 //        }

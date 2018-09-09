@@ -51,13 +51,13 @@ public class Options {
                     
                     Object ignoreTagsObj = handlerInfo.getValue().get("ignore");
 
-                    List<String> ignoreTags = ignoreTagsObj instanceof List ? (List<String>) ignoreTagsObj : Collections.<String>emptyList();
+                    List<String> ignoreTags = ignoreTagsObj instanceof List ? (List<String>) ignoreTagsObj : Collections.emptyList();
                     // System.out.println("Tag: use:" + x);
                     handler = new TagHandler( namedFilters, x, ignoreTags);
                     break;
                 case "Id":
                     Object ignoreIdsObj = handlerInfo.getValue().get("ignore");
-                    List<String> ignoreIds = ignoreIdsObj instanceof List ? (List<String>) ignoreIdsObj : Collections.<String>emptyList();
+                    List<String> ignoreIds = ignoreIdsObj instanceof List ? (List<String>) ignoreIdsObj : Collections.emptyList();
                     handler = new IdsHandler(this, ignoreIds);
                     break;
                 case "Classes":
@@ -75,8 +75,8 @@ public class Options {
                 case "Text Values":
                     Object onlyTagsObj = handlerInfo.getValue().get("onyTags");
                     Object ignoreTVTagsObj = handlerInfo.getValue().get("ignoreTags");
-                    List<String> onlyTags = onlyTagsObj instanceof List ? (List<String>) onlyTagsObj : Collections.<String>emptyList();
-                    List<String> ignoreTVTags = ignoreTVTagsObj instanceof List ? (List<String>) ignoreTVTagsObj : Collections.<String>emptyList();
+                    List<String> onlyTags = onlyTagsObj instanceof List ? (List<String>) onlyTagsObj : Collections.emptyList();
+                    List<String> ignoreTVTags = ignoreTVTagsObj instanceof List ? (List<String>) ignoreTVTagsObj : Collections.emptyList();
                     handler = new TextValuesHandler( namedFilters, onlyTags, ignoreTVTags);
                     break;
                 default:

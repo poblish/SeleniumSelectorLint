@@ -3,8 +3,8 @@ package org.hiatusuk.selectorLint.tree;
 import com.google.common.base.MoreObjects;
 
 public class NodeRelation {
-    private boolean directParent;
-    private Node target;
+    private final boolean directParent;
+    private final Node target;
 
     public NodeRelation(final Node node, final boolean direct) {
         this.target = node;

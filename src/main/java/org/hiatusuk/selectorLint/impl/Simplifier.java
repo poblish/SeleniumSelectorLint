@@ -5,7 +5,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
 import org.hiatusuk.selectorLint.ElementContext;
@@ -118,14 +117,10 @@ public class Simplifier {
 
             private boolean isUnique(final By selector, final List<WebElement> originals) {
                 try {
-                    return selectorCacheByPage.get(selector, new Callable<Boolean>() {
-
-                        @Override
-                        public Boolean call() throws Exception {
-                            System.out.println("... " + selector);
-                            return driver.findElements(selector).equals(originals);
-                        }
-                    } );
+                    return selectorCacheByPage.get(selector, () -> {
+                        System.out.println("... " + selector);
+                        return driver.findElements(selector).equals(originals);
+                    });
                 }
                 catch (ExecutionException e) {
                     throw Throwables.propagate(e);
@@ -133,12 +128,7 @@ public class Simplifier {
             }
         };
 
-        final NodeAdder nodes = new NodeAdder() {
-
-            @Override
-            public Node add( String selector, boolean direct) {
-                return Simplifier.this.addNode(selector, direct);
-            }};
+        final NodeAdder nodes = Simplifier.this::addNode;
 
         /////////////////////////////////////////////////////////////////
 

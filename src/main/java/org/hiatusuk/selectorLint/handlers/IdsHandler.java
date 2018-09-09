@@ -2,6 +2,7 @@ package org.hiatusuk.selectorLint.handlers;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.hiatusuk.selectorLint.*;
 import org.hiatusuk.selectorLint.config.Options;
@@ -13,8 +14,6 @@ import org.hiatusuk.selectorLint.tree.NodeVisitor;
 import org.hiatusuk.selectorLint.tree.Path;
 import org.hiatusuk.selectorLint.utils.Strings;
 import org.openqa.selenium.By;
-
-import com.google.common.base.Predicate;
 
 public class IdsHandler extends AbstractBaseHandler {
 
@@ -29,7 +28,7 @@ public class IdsHandler extends AbstractBaseHandler {
         final String id = ctxt.attributes().get("id");
         // Need a quality/generated check on this Id!
 
-        if (Strings.hasString(id) && ignoreItems.apply(id)) {
+        if (Strings.hasString(id) && ignoreItems.test(id)) {
             if (ctxt.getOriginalSelector().equals("By.id: " + id) ||
                 ctxt.getOriginalSelector().equals("By.cssSelector: #" + id) ||
                 ctxt.getOriginalSelector().equals("By.xpath: //*[@id=\"" + id + "\"]") ||

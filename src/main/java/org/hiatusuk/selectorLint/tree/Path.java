@@ -6,7 +6,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.primitives.Ints;
 
 public class Path implements Comparable<Path> {
-    private StringBuilder currentPath;
+    private final StringBuilder currentPath;
     private int score;
 
     public Path() {

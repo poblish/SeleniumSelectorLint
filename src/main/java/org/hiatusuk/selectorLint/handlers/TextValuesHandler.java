@@ -29,13 +29,13 @@ public class TextValuesHandler extends AbstractBaseHandler {
         }
 
         // Exit if we've set an "Only these tags" list, and the current Tag *wasn't* found
-        if (!onlyTags.isEmpty() && onlyTags.apply( ctxt.currentTagName() )) {
+        if (!onlyTags.isEmpty() && onlyTags.test( ctxt.currentTagName() )) {
             // System.out.println("TV Requires ONLY text for " + ctxt.currentTagName());
             return false;
         }
 
         // Exit if we've set an "Ignore these tags" list, and the current Tag *was* found
-        if (!ignoreTags.isEmpty() && !ignoreTags.apply( ctxt.currentTagName() )) {
+        if (!ignoreTags.isEmpty() && !ignoreTags.test( ctxt.currentTagName() )) {
             // System.out.println("TV Should IGNORE text for " + ctxt.currentTagName());
             return false;
         }

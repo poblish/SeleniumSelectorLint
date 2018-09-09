@@ -1,13 +1,11 @@
 package org.hiatusuk.selectorLint;
 
-import java.io.IOException;
-
 import org.hiatusuk.selectorLint.config.Options;
 import org.testng.annotations.Test;
 
 public class ConfigTest {
 
-    @Test public void testConfig() throws IOException {
+    @Test public void testConfig() {
         final Options opts = Options.read("options.yaml");
 
 //        for (Entry<String,Object> rule : opts.getRules().entrySet()) {
