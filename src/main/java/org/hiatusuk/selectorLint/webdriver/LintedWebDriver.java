@@ -7,12 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.hiatusuk.selectorLint.impl.Simplifier;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.*;
-import org.openqa.selenium.internal.WrapsDriver;
 import org.slf4j.Logger;
 
 public class LintedWebDriver implements WebDriver, WrapsDriver, JavascriptExecutor, HasInputDevices, HasTouchScreen {

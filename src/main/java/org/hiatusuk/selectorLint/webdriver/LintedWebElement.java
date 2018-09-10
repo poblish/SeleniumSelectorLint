@@ -5,9 +5,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.List;
 
 import org.openqa.selenium.*;
-import org.openqa.selenium.internal.*;
 
-public class LintedWebElement implements Suggestions, FindsById, FindsByLinkText, FindsByXPath, FindsByTagName, FindsByCssSelector, WebElement, WrapsElement {
+public class LintedWebElement implements Suggestions, WebElement, WrapsElement {
 
     private final WebElement target;
     private final List<By> suggestedSelectors;
@@ -104,66 +103,6 @@ public class LintedWebElement implements Suggestions, FindsById, FindsByLinkText
     @Override
     public String getCssValue( String propertyName) {
         return target.getCssValue(propertyName);
-    }
-
-    @Override
-    public WebElement findElementByCssSelector( String using) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<WebElement> findElementsByCssSelector( String using) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public WebElement findElementByTagName( String using) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<WebElement> findElementsByTagName( String using) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public WebElement findElementByXPath( String using) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<WebElement> findElementsByXPath( String using) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public WebElement findElementByLinkText( String using) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<WebElement> findElementsByLinkText( String using) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public WebElement findElementByPartialLinkText( String using) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<WebElement> findElementsByPartialLinkText( String using) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public WebElement findElementById( String using) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<WebElement> findElementsById( String using) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

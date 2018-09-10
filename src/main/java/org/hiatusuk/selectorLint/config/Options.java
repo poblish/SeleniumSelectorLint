@@ -10,7 +10,6 @@ import org.hiatusuk.selectorLint.handlers.*;
 
 import com.esotericsoftware.yamlbeans.YamlConfig;
 import com.esotericsoftware.yamlbeans.YamlReader;
-import com.google.common.base.Throwables;
 
 public class Options {
     @SuppressWarnings("unused")
@@ -27,7 +26,7 @@ public class Options {
             return read( new FileReader(optsFilePath) );
         }
         catch (IOException e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
     }
     
