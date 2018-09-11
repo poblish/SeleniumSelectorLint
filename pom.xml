@@ -9,6 +9,8 @@
     <packaging>jar</packaging>
 
     <name>Selenium Selector Lint</name>
+    <description>A WebDriver proxy that emits semantically cleaner versions of your selectors at runtime</description>
+
     <url>https://github.com/poblish/SeleniumSelectorLint</url>
     <organization>
         <url>https://github.com/poblish/</url>
