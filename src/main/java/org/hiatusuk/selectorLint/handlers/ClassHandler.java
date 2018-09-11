@@ -28,6 +28,7 @@ public class ClassHandler extends AbstractBaseHandler {
         this.minAcceptableClassLength = minAcceptableClassLength;
     }
 
+    @Override
     public boolean getImprovedSelectors(final ElementContext ctxt, final NodeAdder nodes, final MatchTester tester) {
         if (ctxt.currentTagName().equals("body") || ctxt.currentTagName().equals("main") || ctxt.currentTagName().equals("html") || ctxt.currentTagName().equals("head")) {
             return false;

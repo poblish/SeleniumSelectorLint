@@ -23,6 +23,7 @@ public class IdsHandler extends AbstractBaseHandler {
         this.ignoreItems = new RulesBasedFilter(opts.getNamedFilters(), ignoreItems);
     }
 
+    @Override
     public boolean getImprovedSelectors(final ElementContext ctxt, final NodeAdder nodes, final MatchTester tester) {
 
         final String id = ctxt.attributes().get("id");

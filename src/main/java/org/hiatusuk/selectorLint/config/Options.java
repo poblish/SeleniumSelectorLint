@@ -1,7 +1,10 @@
 package org.hiatusuk.selectorLint.config;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -10,6 +13,8 @@ import org.hiatusuk.selectorLint.handlers.*;
 
 import com.esotericsoftware.yamlbeans.YamlConfig;
 import com.esotericsoftware.yamlbeans.YamlReader;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Options {
     @SuppressWarnings("unused")
@@ -23,14 +28,14 @@ public class Options {
 
     public static Options read(final String optsFilePath) {
         try {
-            return read( new FileReader(optsFilePath) );
+            return read( Files.newBufferedReader(Paths.get(optsFilePath), UTF_8) );
         }
         catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
     
-    private static Options read(final FileReader reader) throws IOException {
+    private static Options read(final BufferedReader reader) throws IOException {
         final YamlConfig yc = new YamlConfig();
         yc.setPrivateFields(true);
 

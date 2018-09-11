@@ -20,6 +20,7 @@ public class TextValuesHandler extends AbstractBaseHandler {
         this.ignoreTags = new RulesBasedFilter(rules, ignoreTags);
     }
 
+    @Override
     public boolean getImprovedSelectors(final ElementContext ctxt, final NodeAdder nodes, final MatchTester tester) {
 
         final String elemStr = ctxt.element().getText();

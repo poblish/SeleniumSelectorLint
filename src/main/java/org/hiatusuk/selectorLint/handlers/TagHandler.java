@@ -29,6 +29,7 @@ public class TagHandler extends AbstractBaseHandler {
         return semanticTags.test( elem.getTagName().toLowerCase() );
     }
 
+    @Override
     public boolean getImprovedSelectors(final ElementContext ctxt, final NodeAdder nodes, final MatchTester tester) {
 //        System.out.println("-- TAG Mediocre? " + isMediocreQuality( ctxt.element() ) + " for " + ctxt.element());
         if (isMediocreQuality( ctxt.element() )) {

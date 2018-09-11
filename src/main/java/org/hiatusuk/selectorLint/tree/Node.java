@@ -16,6 +16,7 @@ public class Node implements Iterable<NodeRelation> {
         this.self = self;
     }
 
+    @SuppressWarnings("ReferenceEquality")
     public Node addChild( Node node, boolean direct) {
         Preconditions.checkArgument(node != this);
         children.add( new NodeRelation(node, direct) );

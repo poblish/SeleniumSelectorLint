@@ -16,6 +16,7 @@ public class LintedWebElement implements Suggestions, WebElement, WrapsElement {
         this.suggestedSelectors = checkNotNull(suggestedSelectors);
     }
 
+    @Override
     public List<By> getSuggestedSelectors() {
         return suggestedSelectors;
     }

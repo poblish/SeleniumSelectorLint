@@ -19,6 +19,7 @@ public class LintedWebElements extends ArrayList<WebElement> implements Suggesti
         this.suggestedSelectors = checkNotNull(suggestedSelectors);
     }
 
+    @Override
     public List<By> getSuggestedSelectors() {
         return suggestedSelectors;
     }
