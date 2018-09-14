@@ -5,7 +5,7 @@
 
     <groupId>org.hiatusuk</groupId>
     <artifactId>seleniumSelectorLint</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>Selenium Selector Lint</name>
@@ -37,6 +37,12 @@
     </scm>
 
     <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>26.0-jre</version>
+        </dependency>
+
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
