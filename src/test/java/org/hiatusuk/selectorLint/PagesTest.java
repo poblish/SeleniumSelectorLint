@@ -143,17 +143,6 @@ public class PagesTest {
     }
 
     @Test
-    public void testNews() {
-        // driver.get("https://the-internet.herokuapp.com/dynamic_content?with_content=static");
-        driver.get(new File("/Users/andrewregan/Development/Git/e2e_core/demos/static_pages/news.html").toURI().toString());
-
-        ((LintedWebElement) driver.findElement( By.cssSelector("ul[aria-label=\"News\"] li.selected span") )).getSuggestedSelectors();
-        ((LintedWebElement) driver.findElement( By.cssSelector("ul.navigation-wide-list li:nth-of-type(3) span") )).getSuggestedSelectors();
-        ((LintedWebElement) driver.findElement( By.cssSelector("ul.navigation-wide-list li:nth-of-type(6) span") )).getSuggestedSelectors();
-        ((LintedWebElement) driver.findElement( By.cssSelector("div.condor-item:first-of-type span") )).getSuggestedSelectors();
-    }
-
-    @Test
     public void testGithubPage() {
         // driver.get("https://the-internet.herokuapp.com/dynamic_content?with_content=static");
         driver.get(new File("src/test/resources/github.html").toURI().toString());
