@@ -29,19 +29,12 @@ public class LintedWebDriver implements WebDriver, WrapsDriver, JavascriptExecut
 
     @Override
     public WebElement findElement( final By by) {
-//        long startNs = System.nanoTime();
         final WebElement original = getWrappedDriver().findElement(by);
-//        double diffMs = (System.nanoTime() - startNs) / 1E6;
 
-        final List<By> newBys = simplifier.getImprovedSelector(Collections.singletonList(original), by.toString());
+        final List<By> newBys = simplifier.getImprovedSelector( Collections.singletonList(original), by.toString());
 
-        if (suggestionsLogger != null) {
-            if (newBys.isEmpty()) {
-                suggestionsLogger.debug("> No Suggestions for [" + by + "]");
-            }
-            else {
-                suggestionsLogger.debug("> Suggestions for [" + by + "] ... " + newBys);
-            }
+        if (suggestionsLogger != null && !newBys.isEmpty()) {
+            suggestionsLogger.debug("> Suggestions for [" + by + "] ... " + newBys);
         }
 
         return new LintedWebElement(original, newBys);
@@ -49,19 +42,15 @@ public class LintedWebDriver implements WebDriver, WrapsDriver, JavascriptExecut
 
     @Override
     public List<WebElement> findElements( final By by) {
-//        long startNs = System.nanoTime();
         final List<WebElement> originals = getWrappedDriver().findElements(by);
-//        double diffMs = (System.nanoTime() - startNs) / 1E6;
+        if (originals.isEmpty()) {
+            return new LintedWebElements(originals, Collections.emptyList());
+        }
 
-        final List<By> newBys = simplifier.getImprovedSelector(originals, by.toString());
+        final List<By> newBys = simplifier.getImprovedSelector( Collections.singletonList(originals.iterator().next()), by.toString());
 
-        if (suggestionsLogger != null) {
-            if (newBys.isEmpty()) {
-                suggestionsLogger.debug("> NO Suggestions for [" + by + "]");
-            }
-            else {
-                suggestionsLogger.debug("> Suggestions for [" + by + "] ... " + newBys);
-            }
+        if (suggestionsLogger != null && !newBys.isEmpty()) {
+            suggestionsLogger.debug("> Suggestions for [" + by + "] ... " + newBys);
         }
 
         return new LintedWebElements(originals, newBys);

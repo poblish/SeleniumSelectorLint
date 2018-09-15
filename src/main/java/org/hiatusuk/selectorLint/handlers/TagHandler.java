@@ -1,7 +1,6 @@
 package org.hiatusuk.selectorLint.handlers;
 
 import java.util.List;
-import java.util.Set;
 import java.util.function.Predicate;
 
 import org.hiatusuk.selectorLint.ElementContext;
@@ -53,10 +52,7 @@ public class TagHandler extends AbstractBaseHandler {
         ctxt.setHasSomeProps();
         ctxt.setAddedGoodNonUniqueNode();
 
-        final Set<Path> paths = new NodeVisitor().visit(newNode);
-        // System.out.println("::: TAG: " + paths.size() + " paths: " + paths);
-
-        for (Path each : paths) {
+        for (Path each : new NodeVisitor().visit(newNode)) {
             if (tester.ok( By.cssSelector( each.getPath() ) )) {
                 return true;
             }

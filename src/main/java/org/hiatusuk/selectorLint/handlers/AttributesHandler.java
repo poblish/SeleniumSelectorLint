@@ -3,7 +3,6 @@ package org.hiatusuk.selectorLint.handlers;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.hiatusuk.selectorLint.ElementContext;
 import org.hiatusuk.selectorLint.config.Rules;
@@ -78,10 +77,7 @@ public class AttributesHandler extends AbstractBaseHandler {
 
             final Node newNode = nodes.add( ctxt.currentTagName() + "[" + eachAttr.getKey() + "='" + eachAttr.getValue() + "']", true);
 
-            final Set<Path> paths = new NodeVisitor().visit(newNode);
-            // System.out.println("::: ATTR: " + paths.size() + " paths: " + paths);
-
-            for (Path each : paths) {
+            for (Path each : new NodeVisitor().visit(newNode)) {
                 if (tester.ok( By.cssSelector( each.getPath() ) )) {
                     gotResult = true;
                 }

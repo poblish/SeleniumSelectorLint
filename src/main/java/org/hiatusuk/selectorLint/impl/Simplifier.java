@@ -117,7 +117,7 @@ public class Simplifier {
             private boolean isUnique(final By selector, final List<WebElement> originals) {
                 try {
                     return selectorCacheByPage.get(selector, () -> {
-                        System.out.println("... " + selector);
+//                        System.out.println("... " + selector + " => " + driver.findElements(selector));
                         return driver.findElements(selector).equals(originals);
                     });
                 }
@@ -126,8 +126,6 @@ public class Simplifier {
                 }
             }
         };
-
-        final NodeAdder nodes = Simplifier.this::addNode;
 
         /////////////////////////////////////////////////////////////////
 
@@ -150,7 +148,7 @@ public class Simplifier {
             hasSomeProps = addedGoodNonUniqueNode = lastPivotSetForThisLevel = false;
 
             for (ElementHandler eachHandler : options.handlers()) {
-                if (eachHandler.getImprovedSelectors(ctxt, nodes, tester)) {
+                if (eachHandler.getImprovedSelectors(ctxt, Simplifier.this::addNode, tester)) {
                     if (/* FIXME Pretty vile assumption */ eachHandler instanceof IdsHandler) {
                         return results;
                     }

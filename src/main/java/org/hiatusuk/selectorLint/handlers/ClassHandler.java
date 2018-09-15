@@ -3,7 +3,6 @@ package org.hiatusuk.selectorLint.handlers;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -50,10 +49,7 @@ public class ClassHandler extends AbstractBaseHandler {
 
             final Node newNode = nodes.add( ctxt.currentTagName() + "." + CssUtils.cssEscape(eachClass), true);
 
-            final Set<Path> paths = new NodeVisitor().visit(newNode);
-            // System.out.println("::: CLASS: " + paths.size() + " paths: " + paths);
-
-            for (Path each : paths) {
+            for (Path each : new NodeVisitor().visit(newNode)) {
                 if (tester.ok( By.cssSelector( each.getPath() ) )) {
                     return true; // FIXME Should set flag and *not* exit, i.e. gotGoodClass = true;
                 }
@@ -63,19 +59,14 @@ public class ClassHandler extends AbstractBaseHandler {
         return gotGoodClass;
     }
 
-    private final Predicate<String> acceptRule = new Predicate<String>() {
-
-        @Override
-        public boolean test(final String inClass) {
-            return ignoreClassNames.test(inClass) && inClass.length() >= minAcceptableClassLength;
-        }};
-
     private Iterable<String> filter(final String classStr) {
         if (classStr == null || classStr.isEmpty()) {
             return Collections.emptyList();
         }
 
         // FIXME Either filter by quality or *score*
-        return Arrays.stream( classStr.split(" ") ).filter(acceptRule).collect(Collectors.toList());
+        return Arrays.stream( classStr.split(" ") )
+                .filter(inClass -> ignoreClassNames.test(inClass) && inClass.length() >= minAcceptableClassLength)
+                .collect(Collectors.toList());
     }
 }

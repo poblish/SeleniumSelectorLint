@@ -1,7 +1,6 @@
 package org.hiatusuk.selectorLint.handlers;
 
 import java.util.List;
-import java.util.Set;
 import java.util.function.Predicate;
 
 import org.hiatusuk.selectorLint.*;
@@ -46,10 +45,8 @@ public class IdsHandler extends AbstractBaseHandler {
 
             final Node newNode = nodes.add("#" + id, true);
 
-            final Set<Path> paths = new NodeVisitor().visit(newNode);
-            // System.out.println("::: " + paths.size() + " paths: " + paths);
+            for (Path each : new NodeVisitor().visit(newNode)) {
 
-            for (Path each : paths) {
                 final By sel = By.cssSelector( each.getPath() );
                 if (ctxt.getOriginalSelector().equals( sel.toString() )) {
                     return true;

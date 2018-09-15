@@ -73,7 +73,7 @@ public class StackToSelectorTest {
     }
 
     private void testPaths(Node top, String exp) {
-        Set<Path> paths = new NodeVisitor().visit(top);
+        Set<Path> paths = new NodeVisitor().visit(top, /* override max depth for tests */ 999);
         System.out.println( paths.size() + " paths: " + paths);
         assertThat( paths.toString(), is(exp));
     }

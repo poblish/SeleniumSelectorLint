@@ -4,6 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -14,6 +15,7 @@ import org.hiatusuk.selectorLint.webdriver.LintedWebElements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver.Navigation;
 import org.openqa.selenium.WebDriver.TargetLocator;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.interactions.Keyboard;
 import org.openqa.selenium.interactions.Mouse;
@@ -100,8 +102,7 @@ public class PagesTest {
     @Test
     public void testCrunch() {
         driver.get(new File("src/test/resources/crunch.html").toURI().toString());
-        testElement(driver, By.xpath("//*[@id=\"content\"]/div[2]/div/div[2]/div[2]/h2/a"),
-                  /* ==> */ By.cssSelector("div.row > div:nth-child(2) > div:nth-child(2) > h2 a"));
+        testNoChange(driver, By.xpath("//*[@id=\"content\"]/div[2]/div/div[2]/div[2]/h2/a"));
 
         testElement(driver, By.cssSelector("#content > div:nth-child(11) > div > div.testimonial.image-tile.tile.third-tile > section > p:nth-child(2)"),
                   /* ==> */ By.cssSelector("div.third\\-tile p:nth-child(2)"));
@@ -113,8 +114,7 @@ public class PagesTest {
     @Test
     public void testGmailPage() {
         driver.get(new File("src/test/resources/gmail.html").toURI().toString());
-        testElement(driver, By.xpath("//*[@id=\":kj\"]/span"),
-                  /* ==> */ By.cssSelector("table tr:nth-child(1) > td:nth-child(5) > div:nth-child(1) > span"));
+        testNoChange(driver, By.xpath("//*[@id=\":kj\"]/span"));
     }
 
     @Test
@@ -140,6 +140,17 @@ public class PagesTest {
 
         testElement(driver, By.cssSelector("#text__headings > div > h2"),
                   /* ==> */ By.cssSelector("#text__headings h2"));
+    }
+
+    @Test
+    public void testNews() {
+        // driver.get("https://the-internet.herokuapp.com/dynamic_content?with_content=static");
+        driver.get(new File("/Users/andrewregan/Development/Git/e2e_core/demos/static_pages/news.html").toURI().toString());
+
+        ((LintedWebElement) driver.findElement( By.cssSelector("ul[aria-label=\"News\"] li.selected span") )).getSuggestedSelectors();
+        ((LintedWebElement) driver.findElement( By.cssSelector("ul.navigation-wide-list li:nth-of-type(3) span") )).getSuggestedSelectors();
+        ((LintedWebElement) driver.findElement( By.cssSelector("ul.navigation-wide-list li:nth-of-type(6) span") )).getSuggestedSelectors();
+        ((LintedWebElement) driver.findElement( By.cssSelector("div.condor-item:first-of-type span") )).getSuggestedSelectors();
     }
 
     @Test
